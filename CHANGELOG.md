@@ -9,3 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Architecture
+- Outlined zero-dependency pure Java 21 architecture for `dsa-engine`.
+- Decoupled algorithmic core from Spring Boot and persistence layers.
+
