@@ -17,3 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Designed `FlowEdge` with directed residual capacity and reverse edge pointer.
 - Designed `FlowNetwork` adjacency list representation for directed residual networks.
 
+### Specifications
+- Documented invariant $\sum_{v} f(u, v) = 0$ (flow conservation) for intermediate nodes.
+- Added residual capacity equation: $c_f(u, v) = c(u, v) - f(u, v)$.
+
