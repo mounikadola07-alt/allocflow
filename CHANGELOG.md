@@ -25,3 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented `FordFulkersonAlgorithm` using depth-first search for augmenting path discovery.
 - Documented worst-case time complexity $O(E \cdot |f|)$.
 
+### Testing
+- Defined baseline test scenarios: disconnected graphs, zero-capacity bottlenecks, and cyclic residuals.
+
