@@ -28,3 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Testing
 - Defined baseline test scenarios: disconnected graphs, zero-capacity bottlenecks, and cyclic residuals.
 
+### Added - Algorithms
+- Implemented `EdmondsKarpAlgorithm` using breadth-first search (BFS) on residual network.
+- Guaranteed polynomial runtime $O(V \cdot E^2)$ independent of capacity magnitudes.
+
