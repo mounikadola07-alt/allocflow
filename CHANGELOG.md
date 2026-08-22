@@ -35,3 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Benchmarks - DSA
 - Recorded empirical observations comparing DFS path lengths versus BFS shortest path counts.
 
+### Added - Algorithms
+- Implemented `DinicAlgorithm` incorporating BFS level-graph construction and DFS blocking flow decomposition.
+- Achieved $O(V^2 E)$ general network complexity, reducing to $O(E \sqrt{V})$ on unit bipartite networks.
+
