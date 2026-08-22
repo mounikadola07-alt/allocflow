@@ -39,3 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented `DinicAlgorithm` incorporating BFS level-graph construction and DFS blocking flow decomposition.
 - Achieved $O(V^2 E)$ general network complexity, reducing to $O(E \sqrt{V})$ on unit bipartite networks.
 
+### Optimizations
+- Introduced dynamic `work[]` pointer array to prune dead-end vertices during Dinic DFS blocking flow traversal.
+
