@@ -42,3 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Optimizations
 - Introduced dynamic `work[]` pointer array to prune dead-end vertices during Dinic DFS blocking flow traversal.
 
+
+---
+
+## [0.1.0-alpha] - 2026-08-23
+
+### Milestone Summary
+- Complete pure Java 21 Max-Flow engine with Ford-Fulkerson, Edmonds-Karp, and Dinic implementations.
+- Zero external runtime dependencies in `dsa-engine` module.
+
