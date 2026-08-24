@@ -51,3 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete pure Java 21 Max-Flow engine with Ford-Fulkerson, Edmonds-Karp, and Dinic implementations.
 - Zero external runtime dependencies in `dsa-engine` module.
 
+### Added - Allocation Core
+- Added `BipartiteGraphBuilder` transforming conference submissions and reviewers into an $S \to P \to R \to T$ flow network.
+- Configured source-to-paper edges with required review count capacity $k$.
+
