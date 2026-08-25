@@ -63,3 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Designed `CompatibilityCalculator` combining primary topic matching and keyword Jaccard overlap.
 - Applied thresholding filters to discard weak candidate edges before residual network construction.
 
+### Security & Integrity
+- Formulated zero-COI (Conflict of Interest) guarantees.
+- Pruned paper-reviewer edges where co-authorship or institutional affiliation overlaps occur.
+
