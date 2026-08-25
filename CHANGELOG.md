@@ -59,3 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added reviewer sink capacities enforcing maximum workload limits per reviewer.
 - Enabled uneven reviewer quota distribution.
 
+### Added - Matching
+- Designed `CompatibilityCalculator` combining primary topic matching and keyword Jaccard overlap.
+- Applied thresholding filters to discard weak candidate edges before residual network construction.
+
