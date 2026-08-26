@@ -67,3 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Formulated zero-COI (Conflict of Interest) guarantees.
 - Pruned paper-reviewer edges where co-authorship or institutional affiliation overlaps occur.
 
+### Verification
+- Implemented `GraphFingerprint` generating SHA-256 hashes of sorted canonical adjacency structures.
+- Verified input graph immutability across sequential algorithm executions.
+
