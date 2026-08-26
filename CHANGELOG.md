@@ -71,3 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented `GraphFingerprint` generating SHA-256 hashes of sorted canonical adjacency structures.
 - Verified input graph immutability across sequential algorithm executions.
 
+### Testing - Invariants
+- Added `TriAlgorithmEquivalenceTest` verifying:
+  $$\text{MaxFlow}_{\text{FF}}(G) = \text{MaxFlow}_{\text{EK}}(G) = \text{MaxFlow}_{\text{Dinic}}(G)$$
+  on 500+ randomized synthetic graph instances.
+
