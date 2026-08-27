@@ -76,3 +76,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   $$\text{MaxFlow}_{\text{FF}}(G) = \text{MaxFlow}_{\text{EK}}(G) = \text{MaxFlow}_{\text{Dinic}}(G)$$
   on 500+ randomized synthetic graph instances.
 
+### Added - Tooling
+- Implemented `SyntheticDatasetGenerator` parameterizing conference scale: $N$ papers, $M$ reviewers, density $p$, and topic distributions.
+
