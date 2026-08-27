@@ -79,3 +79,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Tooling
 - Implemented `SyntheticDatasetGenerator` parameterizing conference scale: $N$ papers, $M$ reviewers, density $p$, and topic distributions.
 
+### Analytics - Benchmarking
+- Configured metrics collector tracking elapsed CPU nanoseconds, total augmenting path iterations, and residual edge traversals.
+
