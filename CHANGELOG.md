@@ -82,3 +82,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Analytics - Benchmarking
 - Configured metrics collector tracking elapsed CPU nanoseconds, total augmenting path iterations, and residual edge traversals.
 
+
+---
+
+## [0.2.0-alpha] - 2026-08-28
+
+### Milestone Summary
+- Bipartite matching with compatibility scoring, COI filtering, and workload limits.
+- SHA-256 canonical graph fingerprinting and mathematical equivalence test harness.
+
