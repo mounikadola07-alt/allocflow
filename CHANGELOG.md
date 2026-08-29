@@ -91,3 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bipartite matching with compatibility scoring, COI filtering, and workload limits.
 - SHA-256 canonical graph fingerprinting and mathematical equivalence test harness.
 
+### Added - Backend
+- Configured Maven parent multi-module structure binding `dsa-engine` into `api` Spring Boot 3 service.
+- Set Java 21 LTS baseline with modern virtual thread readiness.
+
