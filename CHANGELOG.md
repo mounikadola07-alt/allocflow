@@ -95,3 +95,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configured Maven parent multi-module structure binding `dsa-engine` into `api` Spring Boot 3 service.
 - Set Java 21 LTS baseline with modern virtual thread readiness.
 
+### Database - Schema
+- Created Hibernate JPA entities: `Conference`, `Manuscript`, `Reviewer`, `Topic`, and `ReviewAssignment`.
+
