@@ -101,3 +101,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Database - Migrations
 - Added Flyway migration `V1__init_schema.sql` establishing normalized relational tables, foreign keys, and indexes.
 
+### Database - Performance
+- Added B-tree indexes on `manuscripts(track_id, status)` and `users(email, role)`.
+
