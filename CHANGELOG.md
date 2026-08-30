@@ -98,3 +98,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Database - Schema
 - Created Hibernate JPA entities: `Conference`, `Manuscript`, `Reviewer`, `Topic`, and `ReviewAssignment`.
 
+### Database - Migrations
+- Added Flyway migration `V1__init_schema.sql` establishing normalized relational tables, foreign keys, and indexes.
+
