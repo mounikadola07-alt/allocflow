@@ -104,3 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Database - Performance
 - Added B-tree indexes on `manuscripts(track_id, status)` and `users(email, role)`.
 
+### Security - Authentication
+- Configured stateless JWT token generation and validation filter.
+- Integrated BCrypt hashing with configurable work factor for user credentials.
+
