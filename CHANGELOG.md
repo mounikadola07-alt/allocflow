@@ -108,3 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configured stateless JWT token generation and validation filter.
 - Integrated BCrypt hashing with configurable work factor for user credentials.
 
+### Security - RBAC
+- Enforced role hierarchy: `SUPER_ADMIN > CONFERENCE_ADMIN > REVIEWER > AUTHOR`.
+- Secured API endpoints with method-level `@PreAuthorize` security checks.
+
