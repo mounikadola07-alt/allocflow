@@ -112,3 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enforced role hierarchy: `SUPER_ADMIN > CONFERENCE_ADMIN > REVIEWER > AUTHOR`.
 - Secured API endpoints with method-level `@PreAuthorize` security checks.
 
+### Added - Matching API
+- Added `POST /api/v1/matching/simulate` running bipartite flow computation in memory without database mutation.
+- Returned candidate assignments with explainability metrics.
+
