@@ -116,3 +116,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `POST /api/v1/matching/simulate` running bipartite flow computation in memory without database mutation.
 - Returned candidate assignments with explainability metrics.
 
+### Added - Transactions
+- Added `POST /api/v1/matching/commit/{runId}` transactionally persisting generated review assignments with isolation level checks.
+
