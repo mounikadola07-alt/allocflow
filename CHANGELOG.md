@@ -119,3 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Transactions
 - Added `POST /api/v1/matching/commit/{runId}` transactionally persisting generated review assignments with isolation level checks.
 
+### Features - Operations
+- Added `POST /api/v1/matching/override` enabling conference chairs to manually reassign reviewers.
+- Enforced hard COI check preventing manual assignment to conflicting reviewers.
+
