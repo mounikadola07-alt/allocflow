@@ -126,3 +126,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Audit & Compliance
 - Added `AuditLog` entity capturing actor, target manuscript, old reviewer, new reviewer, and timestamp.
 
+
+---
+
+## [0.3.0-beta] - 2026-09-03
+
+### Milestone Summary
+- Spring Boot 3 REST API with PostgreSQL persistence and Flyway migrations.
+- Stateless JWT authentication and comprehensive RBAC security.
+- Simulation, transactional commit, and audited manual override workflows.
+
