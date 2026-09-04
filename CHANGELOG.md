@@ -139,3 +139,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Explainability
 - Created `GET /api/v1/matching/explain` breaking down topic overlap, matching score, reviewer capacity headroom, and COI clearance proof.
 
+### Docs - Explainability
+- Documented how flow path $S \to P_i \to R_j \to T$ is transformed into transparent proof tokens for conference chairs.
+
