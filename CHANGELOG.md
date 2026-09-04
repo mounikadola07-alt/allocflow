@@ -136,3 +136,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stateless JWT authentication and comprehensive RBAC security.
 - Simulation, transactional commit, and audited manual override workflows.
 
+### Added - Explainability
+- Created `GET /api/v1/matching/explain` breaking down topic overlap, matching score, reviewer capacity headroom, and COI clearance proof.
+
