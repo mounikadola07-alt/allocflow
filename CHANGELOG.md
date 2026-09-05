@@ -146,3 +146,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `POST /api/v1/benchmarks/scalability` sweeping network sizes from $N=10$ to $N=500$.
 - Computed median, p95 execution runtimes, and augmentation counts across algorithm triplets.
 
+### Analytics - Curves
+- Added theoretical complexity asymptotic fitting curves ($O(V \cdot E^2)$ and $O(V^2 E)$) against observed nanosecond distributions.
+
