@@ -142,3 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs - Explainability
 - Documented how flow path $S \to P_i \to R_j \to T$ is transformed into transparent proof tokens for conference chairs.
 
+### Added - Benchmarks API
+- Added `POST /api/v1/benchmarks/scalability` sweeping network sizes from $N=10$ to $N=500$.
+- Computed median, p95 execution runtimes, and augmentation counts across algorithm triplets.
+
