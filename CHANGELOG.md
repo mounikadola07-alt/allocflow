@@ -149,3 +149,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Analytics - Curves
 - Added theoretical complexity asymptotic fitting curves ($O(V \cdot E^2)$ and $O(V^2 E)$) against observed nanosecond distributions.
 
+### Added - Analytics
+- Added `GET /api/v1/analytics/dashboard` summarizing manuscript submission statuses, review coverage ratio, and reviewer saturation percentiles.
+
