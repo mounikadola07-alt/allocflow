@@ -152,3 +152,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Analytics
 - Added `GET /api/v1/analytics/dashboard` summarizing manuscript submission statuses, review coverage ratio, and reviewer saturation percentiles.
 
+### Metrics - Workload
+- Implemented workload Gini coefficient and saturation standard deviation metrics to quantify assignment fairness.
+
