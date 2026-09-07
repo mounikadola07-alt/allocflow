@@ -155,3 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Metrics - Workload
 - Implemented workload Gini coefficient and saturation standard deviation metrics to quantify assignment fairness.
 
+### Added - Frontend
+- Initialized Next.js 14 modern frontend with App Router, TypeScript, and React Server Components.
+- Configured Tailwind CSS utility styling and custom layout containers.
+
