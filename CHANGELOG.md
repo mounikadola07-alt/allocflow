@@ -159,3 +159,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initialized Next.js 14 modern frontend with App Router, TypeScript, and React Server Components.
 - Configured Tailwind CSS utility styling and custom layout containers.
 
+### UI/UX - Design System
+- Established pastel brutalist aesthetic: solid pastel cards, subtle borders, high contrast typography, and interactive lift states.
+
