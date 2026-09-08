@@ -162,3 +162,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### UI/UX - Design System
 - Established pastel brutalist aesthetic: solid pastel cards, subtle borders, high contrast typography, and interactive lift states.
 
+
+---
+
+## [0.4.0-beta] - 2026-09-08
+
+### Milestone Summary
+- Explainable matching proof endpoints and empirical benchmark laboratory.
+- Operations analytics aggregations and Next.js 14 frontend scaffolding.
+
