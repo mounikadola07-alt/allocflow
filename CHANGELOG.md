@@ -171,3 +171,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Explainable matching proof endpoints and empirical benchmark laboratory.
 - Operations analytics aggregations and Next.js 14 frontend scaffolding.
 
+### Added - UI Components
+- Built `BipartiteFlowGraph` interactive SVG component rendering $S \to P \to R \to T$ flow networks.
+- Animated active flow edges with directional particle effects.
+
