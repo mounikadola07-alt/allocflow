@@ -175,3 +175,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Built `BipartiteFlowGraph` interactive SVG component rendering $S \to P \to R \to T$ flow networks.
 - Animated active flow edges with directional particle effects.
 
+### UI Components - Playback
+- Added step-by-step playback controls (Play, Pause, Step Forward, Reset) for visualizing augmenting paths.
+
