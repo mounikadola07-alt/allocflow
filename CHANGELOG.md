@@ -178,3 +178,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### UI Components - Playback
 - Added step-by-step playback controls (Play, Pause, Step Forward, Reset) for visualizing augmenting paths.
 
+### Added - UI Components
+- Created `ExplainDrawer` slide-over panel displaying comprehensive assignment proofs, keyword matches, and COI verification badges.
+
