@@ -181,3 +181,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - UI Components
 - Created `ExplainDrawer` slide-over panel displaying comprehensive assignment proofs, keyword matches, and COI verification badges.
 
+### UI/UX - Responsive
+- Optimized drawer slide animations, backdrop blur, and responsive typography on smaller screens.
+
