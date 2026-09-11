@@ -184,3 +184,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### UI/UX - Responsive
 - Optimized drawer slide animations, backdrop blur, and responsive typography on smaller screens.
 
+### Added - Research Mode
+- Implemented interactive runtime and augmentation charts using Recharts.
+- Connected parameter sweep sliders ($N=10 \dots 500$) with TanStack React Query caching.
+
