@@ -188,3 +188,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented interactive runtime and augmentation charts using Recharts.
 - Connected parameter sweep sliders ($N=10 \dots 500$) with TanStack React Query caching.
 
+### Visualizations
+- Added logarithmic scale toggles and p95 error bands to clearly differentiate polynomial algorithm behaviors.
+
