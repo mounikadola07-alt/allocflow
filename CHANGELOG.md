@@ -194,3 +194,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Operations Cockpit
 - Built status pipeline tracking manuscripts through Submitted, Matching In Progress, Assigned, and In Review stages.
 
+### UI Components - Roster
+- Added `ReviewerRoster` component displaying active workload bars, declared COI badges, and status toggle dropdowns.
+
