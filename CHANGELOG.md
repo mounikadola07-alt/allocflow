@@ -191,3 +191,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Visualizations
 - Added logarithmic scale toggles and p95 error bands to clearly differentiate polynomial algorithm behaviors.
 
+### Added - Operations Cockpit
+- Built status pipeline tracking manuscripts through Submitted, Matching In Progress, Assigned, and In Review stages.
+
