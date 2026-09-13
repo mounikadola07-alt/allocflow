@@ -197,3 +197,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### UI Components - Roster
 - Added `ReviewerRoster` component displaying active workload bars, declared COI badges, and status toggle dropdowns.
 
+### Added - Compliance UI
+- Built paginated audit log table with filter controls by actor, event type, and date range.
+- Added modal inspection view for complete event JSON payloads.
+
