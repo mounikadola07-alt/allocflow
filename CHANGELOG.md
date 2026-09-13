@@ -201,3 +201,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Built paginated audit log table with filter controls by actor, event type, and date range.
 - Added modal inspection view for complete event JSON payloads.
 
+### UI/UX - Accessibility
+- Enhanced color contrast on audit log timestamps and status tags to meet WCAG AA standards.
+
