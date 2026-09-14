@@ -207,3 +207,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### UI/UX - Transitions
 - Implemented `CurtainLoader` with staggered pastel panel reveals for seamless route transitions.
 
+### UI/UX - Aesthetics
+- Standardized interactive card hover states: 2px offset drop-shadow expansion and smooth vertical lift.
+
