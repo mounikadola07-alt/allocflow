@@ -204,3 +204,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### UI/UX - Accessibility
 - Enhanced color contrast on audit log timestamps and status tags to meet WCAG AA standards.
 
+### UI/UX - Transitions
+- Implemented `CurtainLoader` with staggered pastel panel reveals for seamless route transitions.
+
