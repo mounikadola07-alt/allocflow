@@ -210,3 +210,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### UI/UX - Aesthetics
 - Standardized interactive card hover states: 2px offset drop-shadow expansion and smooth vertical lift.
 
+### Security - UI
+- Implemented client-side navigation guards locking admin actions for Authors and Reviewers.
+- Added non-obtrusive permission tooltips explaining disabled controls.
+
