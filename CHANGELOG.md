@@ -214,3 +214,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented client-side navigation guards locking admin actions for Authors and Reviewers.
 - Added non-obtrusive permission tooltips explaining disabled controls.
 
+### Tooling - Deployment
+- Added adaptive client-side mock handlers ensuring full functionality during preview deploys when backend is sleeping.
+
