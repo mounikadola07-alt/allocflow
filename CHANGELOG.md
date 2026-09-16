@@ -217,3 +217,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Tooling - Deployment
 - Added adaptive client-side mock handlers ensuring full functionality during preview deploys when backend is sleeping.
 
+
+---
+
+## [1.0.0-rc1] - 2026-09-16
+
+### Milestone Summary
+- Integrated Next.js 14 frontend with Spring Boot 3 backend and DSA engine.
+- Interactive SVG bipartite flow visualizer and explainability drawer.
+- Scalability sweep research laboratory and compliance audit trail.
+
