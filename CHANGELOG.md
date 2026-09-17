@@ -233,3 +233,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### DevOps - Cloud Deployment
 - Added `render.yaml` infrastructure-as-code blueprint specifying web service builds, database env linking, and health checks.
 
+### DevOps - Build
+- Optimized Dockerfiles with multi-stage builds and Alpine runtime images to minimize container footprint.
+
