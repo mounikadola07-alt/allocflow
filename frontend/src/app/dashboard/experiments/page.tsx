@@ -41,6 +41,10 @@ export default function ScalabilityExperimentsPage() {
 
   React.useEffect(() => {
     setMounted(true);
+    if (!sweepResult && !sweepMutation.isPending) {
+      sweepMutation.mutate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data: history, refetch: refetchHistory } = useQuery({
