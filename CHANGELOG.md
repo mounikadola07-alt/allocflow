@@ -230,3 +230,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### DevOps - Containerization
 - Added `docker-compose.yml` orchestrating PostgreSQL database, Spring Boot API, and Next.js frontend on local bridge network.
 
+### DevOps - Cloud Deployment
+- Added `render.yaml` infrastructure-as-code blueprint specifying web service builds, database env linking, and health checks.
+
