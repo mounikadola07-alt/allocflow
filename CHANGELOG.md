@@ -227,3 +227,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Interactive SVG bipartite flow visualizer and explainability drawer.
 - Scalability sweep research laboratory and compliance audit trail.
 
+### DevOps - Containerization
+- Added `docker-compose.yml` orchestrating PostgreSQL database, Spring Boot API, and Next.js frontend on local bridge network.
+
