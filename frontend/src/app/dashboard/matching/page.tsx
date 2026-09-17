@@ -25,8 +25,12 @@ import { BipartiteFlowGraph } from "@/components/graph/BipartiteFlowGraph";
 import { ExplainDrawer } from "@/components/matching/ExplainDrawer";
 import { formatMs } from "@/lib/utils";
 import { Card3D } from "@/components/ui/Card3D";
+import { useAuth } from "@/lib/auth";
+import Link from "next/link";
 
 export default function MatchingCockpitPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
   const queryClient = useQueryClient();
 
   const [algorithm, setAlgorithm] = useState<AlgorithmType>("DINIC");
@@ -42,6 +46,7 @@ export default function MatchingCockpitPage() {
   const { data: conferences } = useQuery({
     queryKey: ["conferences"],
     queryFn: () => api.getConferences(),
+    enabled: isAdmin,
   });
 
   const activeConfId = conferences?.[0]?.id;
@@ -91,6 +96,26 @@ export default function MatchingCockpitPage() {
       console.error("Failed to fetch assignment explanation", e);
     }
   };
+
+  if (user && !isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8 rounded-2xl border border-ink-black/10 bg-white shadow-xl text-center space-y-4">
+        <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200 text-purple-700">
+          <GitMerge className="h-10 w-10" />
+        </div>
+        <h2 className="text-xl font-bold text-ink-black">Matching Engine Cockpit Restricted</h2>
+        <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
+          The Maximum Flow bipartite matching simulation engine and assignment commitment controls are reserved exclusively for Conference Chairs and Algorithm Researchers.
+        </p>
+        <Link
+          href="/dashboard/manuscripts"
+          className="liquid-glass rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black inline-flex items-center gap-2"
+        >
+          <span>View Manuscripts Portal</span>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 select-none text-ink-black">

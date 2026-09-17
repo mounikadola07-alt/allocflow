@@ -14,8 +14,11 @@ import {
   X,
 } from "lucide-react";
 import { Card3D } from "@/components/ui/Card3D";
+import { useAuth } from "@/lib/auth";
 
 export default function ConferencesPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -71,13 +74,19 @@ export default function ConferencesPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="liquid-glass rounded-xl px-4 py-2 text-xs font-semibold text-ink-black flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4 text-ink-black" />
-          <span>New Conference Cycle</span>
-        </button>
+        {isAdmin ? (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="liquid-glass rounded-xl px-4 py-2 text-xs font-semibold text-ink-black flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4 text-ink-black" />
+            <span>New Conference Cycle</span>
+          </button>
+        ) : (
+          <span className="px-3 py-1.5 rounded-xl border border-ink-black/10 bg-ink-black/5 text-xs font-mono text-muted-foreground">
+            Administrative Provisioning Restricted
+          </span>
+        )}
       </div>
 
       {/* Conference Cards */}

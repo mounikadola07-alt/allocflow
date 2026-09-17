@@ -57,22 +57,27 @@ export interface Track {
 
 export interface Manuscript {
   id: string;
-  conferenceId: string;
-  conferenceCode: string;
+  paperCode?: string;
+  conferenceId?: string;
+  conferenceCode?: string;
   trackId?: string;
   trackName?: string;
-  authorId: string;
+  track?: string;
+  authorId?: string;
   authorName: string;
+  primaryAuthorName?: string;
   authorEmail: string;
   title: string;
   abstractText?: string;
   status: ManuscriptStatus;
-  requiredReviews: number;
+  requiredReviews?: number;
+  requiredReviewsCount?: number;
   topics: string[];
   keywords: string[];
-  authorAffiliations: string[];
-  createdAt: string;
-  updatedAt: string;
+  authorAffiliations?: string[];
+  assignedReviewersCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Reviewer {

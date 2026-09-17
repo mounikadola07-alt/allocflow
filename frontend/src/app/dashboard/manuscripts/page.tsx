@@ -16,12 +16,18 @@ import {
   User,
   X,
 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 import type { Manuscript, ManuscriptStatus } from "@/types";
 
 export default function ManuscriptsPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
+  const isAuthor = user?.role === "AUTHOR";
+
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
+  const [authorScope, setAuthorScope] = useState<"MY_PAPERS" | "ALL">(isAuthor ? "MY_PAPERS" : "ALL");
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   // Form state
@@ -73,7 +79,10 @@ export default function ManuscriptsPage() {
       conferenceId: activeConfId,
       title: title.trim(),
       abstractText: abstractText.trim(),
-      requiredReviews,
+      primaryAuthorName: user?.fullName || "Ashish Vaswani",
+      authorName: user?.fullName || "Ashish Vaswani",
+      authorEmail: user?.email || "author.vaswani@google.com",
+      requiredReviews: isAdmin ? requiredReviews : 2,
       topics: topicsInput.split(",").map((s) => s.trim()).filter(Boolean),
       keywords: keywordsInput.split(",").map((s) => s.trim()).filter(Boolean),
       authorAffiliations: affiliationsInput.split(",").map((s) => s.trim()).filter(Boolean),
@@ -81,10 +90,20 @@ export default function ManuscriptsPage() {
   };
 
   const filteredManuscripts = (manuscripts || []).filter((m) => {
+    // If author in "My Submissions" mode, restrict to own papers
+    if (isAuthor && authorScope === "MY_PAPERS") {
+      const isMine =
+        (m.authorEmail && user?.email && m.authorEmail.toLowerCase() === user.email.toLowerCase()) ||
+        (m.authorName && user?.fullName && m.authorName.toLowerCase().includes(user.fullName.toLowerCase())) ||
+        (m.primaryAuthorName && user?.fullName && m.primaryAuthorName.toLowerCase().includes(user.fullName.toLowerCase()));
+      if (!isMine) return false;
+    }
+
+    const authorNameStr = m.authorName || m.primaryAuthorName || "";
     const matchesSearch =
       m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.authorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.topics.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
+      authorNameStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (m.topics && m.topics.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase())));
     const matchesStatus = selectedStatus === "ALL" || m.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
@@ -113,15 +132,42 @@ export default function ManuscriptsPage() {
 
       {/* Filter & Search Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search by title, author, topic..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border border-ink-black/10 bg-white shadow-2xl rounded-2xl py-2.5 pl-9 pr-4 text-xs text-ink-black placeholder:text-muted-foreground focus:border-ink-black/30 focus:outline-none"
-          />
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search by title, author, topic..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-xl border border-ink-black/10 bg-white shadow-2xl rounded-2xl py-2.5 pl-9 pr-4 text-xs text-ink-black placeholder:text-muted-foreground focus:border-ink-black/30 focus:outline-none"
+            />
+          </div>
+
+          {isAuthor && (
+            <div className="flex items-center gap-1 p-1 bg-ink-black/5 border border-ink-black/10 rounded-xl text-xs font-mono">
+              <button
+                onClick={() => setAuthorScope("MY_PAPERS")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  authorScope === "MY_PAPERS"
+                    ? "bg-white shadow-md text-ink-black font-bold"
+                    : "text-muted-foreground hover:text-ink-black"
+                }`}
+              >
+                My Submissions
+              </button>
+              <button
+                onClick={() => setAuthorScope("ALL")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  authorScope === "ALL"
+                    ? "bg-white shadow-md text-ink-black font-bold"
+                    : "text-muted-foreground hover:text-ink-black"
+                }`}
+              >
+                All Papers
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -153,7 +199,9 @@ export default function ManuscriptsPage() {
                 <th className="py-3 px-4">Topics &amp; Keywords</th>
                 <th className="py-3 px-4 text-center">Req. Reviews</th>
                 <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4 text-right">
+                  {isAdmin ? "Admin Status Control" : "Review Phase"}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -171,15 +219,15 @@ export default function ManuscriptsPage() {
                       <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
                         {m.abstractText || "No abstract provided"}
                       </p>
-                      {m.trackName && (
+                      {(m.trackName || m.track) && (
                         <span className="inline-block rounded bg-white shadow-md border border-ink-black/15 px-1.5 py-0.5 text-[9px] font-medium text-ink-black/90 mt-1">
-                          {m.trackName}
+                          {m.trackName || m.track}
                         </span>
                       )}
                     </td>
 
                     <td className="py-3 px-4">
-                      <p className="font-medium text-ink-black">{m.authorName}</p>
+                      <p className="font-medium text-ink-black">{m.authorName || m.primaryAuthorName || "Research Author"}</p>
                       <p className="text-[11px] text-muted-foreground">{m.authorEmail}</p>
                       {m.authorAffiliations && m.authorAffiliations.length > 0 && (
                         <p className="text-[10px] text-muted-foreground/80 mt-0.5">
@@ -190,7 +238,7 @@ export default function ManuscriptsPage() {
 
                     <td className="py-3 px-4 max-w-xs">
                       <div className="flex flex-wrap gap-1">
-                        {m.topics.map((t, idx) => (
+                        {(m.topics || []).map((t, idx) => (
                           <span
                             key={idx}
                             className="rounded bg-white shadow-md border border-ink-black/15 px-1.5 py-0.5 text-[10px] font-medium text-ink-black/90"
@@ -200,7 +248,7 @@ export default function ManuscriptsPage() {
                         ))}
                       </div>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {m.keywords.map((k, idx) => (
+                        {(m.keywords || []).map((k, idx) => (
                           <span
                             key={idx}
                             className="rounded bg-ink-black/5 px-1.5 py-0.5 text-[9px] text-muted-foreground"
@@ -212,7 +260,7 @@ export default function ManuscriptsPage() {
                     </td>
 
                     <td className="py-3 px-4 text-center font-mono font-bold text-ink-black">
-                      {m.requiredReviews}
+                      {m.requiredReviews || m.requiredReviewsCount || 2}
                     </td>
 
                     <td className="py-3 px-4">
@@ -232,19 +280,41 @@ export default function ManuscriptsPage() {
                     </td>
 
                     <td className="py-3 px-4 text-right">
-                      <select
-                        value={m.status}
-                        onChange={(e) =>
-                          statusMutation.mutate({ id: m.id, status: e.target.value })
-                        }
-                        className="rounded border bg-card px-2 py-1 text-[11px] text-foreground focus:outline-none"
-                      >
-                        <option value="SUBMITTED">SUBMITTED</option>
-                        <option value="UNDER_REVIEW">UNDER_REVIEW</option>
-                        <option value="REVIEWS_COMPLETE">REVIEWS_COMPLETE</option>
-                        <option value="ACCEPTED">ACCEPTED</option>
-                        <option value="REJECTED">REJECTED</option>
-                      </select>
+                      {isAdmin ? (
+                        <select
+                          value={m.status}
+                          onChange={(e) =>
+                            statusMutation.mutate({ id: m.id, status: e.target.value })
+                          }
+                          className="rounded-xl border border-ink-black/20 bg-white shadow-sm px-2.5 py-1 text-[11px] font-mono font-medium text-ink-black focus:outline-none"
+                        >
+                          <option value="SUBMITTED">SUBMITTED</option>
+                          <option value="UNDER_REVIEW">UNDER_REVIEW</option>
+                          <option value="REVIEWS_COMPLETE">REVIEWS_COMPLETE</option>
+                          <option value="ACCEPTED">ACCEPTED</option>
+                          <option value="REJECTED">REJECTED</option>
+                        </select>
+                      ) : (
+                        <div className="flex items-center justify-end gap-1.5 text-right font-mono">
+                          <span className="px-2.5 py-1 rounded-md bg-ink-black/5 border border-ink-black/10 text-[10px] text-muted-foreground">
+                            {m.status === "SUBMITTED"
+                              ? "Awaiting PC"
+                              : m.status === "UNDER_REVIEW"
+                              ? "In Review"
+                              : m.status === "ACCEPTED"
+                              ? "Accepted ✓"
+                              : m.status === "REJECTED"
+                              ? "Rejected ✗"
+                              : "Deciding"}
+                          </span>
+                          <span
+                            className="text-[10px] text-muted-foreground/60 font-semibold"
+                            title="Only Conference Chairs can modify manuscript decision status"
+                          >
+                            (Locked)
+                          </span>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -304,14 +374,20 @@ export default function ManuscriptsPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-foreground">Required Reviews</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={5}
-                    value={requiredReviews}
-                    onChange={(e) => setRequiredReviews(Number(e.target.value))}
-                    className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
-                  />
+                  {isAdmin ? (
+                    <input
+                      type="number"
+                      min={1}
+                      max={5}
+                      value={requiredReviews}
+                      onChange={(e) => setRequiredReviews(Number(e.target.value))}
+                      className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
+                    />
+                  ) : (
+                    <div className="mt-1 w-full rounded-md border border-ink-black/10 bg-ink-black/5 p-2 text-xs text-ink-black font-mono">
+                      2 Reviews (Standard Conference Policy)
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="font-semibold text-foreground">Author Affiliation</label>
@@ -322,6 +398,11 @@ export default function ManuscriptsPage() {
                     className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
                   />
                 </div>
+              </div>
+
+              <div className="p-2.5 rounded-lg border border-ink-black/10 bg-ink-black/5 text-[11px] font-mono text-muted-foreground flex justify-between">
+                <span>Submitting Author:</span>
+                <span className="font-bold text-ink-black">{user?.fullName || "Ashish Vaswani"} ({user?.email || "author.vaswani@google.com"})</span>
               </div>
 
               <div>

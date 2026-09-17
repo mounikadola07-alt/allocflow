@@ -4,14 +4,39 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { ShieldAlert, Search, RefreshCw, Clock, Filter } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import Link from "next/link";
 
 export default function AuditLogsPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: auditData, isLoading, refetch } = useQuery({
     queryKey: ["audit-logs"],
     queryFn: () => api.getAuditLogs(0, 50),
+    enabled: isAdmin,
   });
+
+  if (user && !isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8 rounded-2xl border border-ink-black/10 bg-white shadow-xl text-center space-y-4">
+        <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700">
+          <ShieldAlert className="h-10 w-10" />
+        </div>
+        <h2 className="text-xl font-bold text-ink-black">Administrative Access Required</h2>
+        <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
+          The cryptographic compliance audit trail and immutable system event logs are restricted to Conference Chairs and System Administrators.
+        </p>
+        <Link
+          href="/dashboard"
+          className="liquid-glass rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black inline-flex items-center gap-2"
+        >
+          <span>Return to Dashboard</span>
+        </Link>
+      </div>
+    );
+  }
 
   const logs = auditData?.content || [];
 

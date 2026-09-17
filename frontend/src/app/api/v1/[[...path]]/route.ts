@@ -28,84 +28,132 @@ const mockTracks = [
   { id: "t-5", conferenceId: "2b638d71-9f0c-4e95-be01-ce9b1774c4c8", name: "Distributed Storage", description: "Replicated state machines, transactional databases" },
 ];
 
-let mockManuscripts = [
+let mockManuscripts: any[] = [
   {
     id: "m-1",
     paperCode: "ICDCS-2026-001",
     title: "Deterministic Flow Augmentation in High-Throughput Matching",
     track: "Systems & Algorithms",
+    trackName: "Systems & Algorithms",
     primaryAuthorName: "Dr. Elena Rostova",
+    authorName: "Dr. Elena Rostova",
     authorEmail: "elena.rostova@mit.edu",
+    authorAffiliations: ["MIT CSAIL"],
     topics: ["Network Flow", "Distributed Systems", "Graph Algorithms"],
     keywords: ["max-flow", "dinic", "bipartite"],
     assignedReviewersCount: 2,
+    requiredReviews: 2,
     requiredReviewsCount: 2,
     status: "UNDER_REVIEW",
+    createdAt: "2026-08-18T17:15:28.285836Z",
   },
   {
     id: "m-2",
     paperCode: "ICDCS-2026-002",
     title: "Fault-Tolerant Consensus Over Dynamic Topologies",
     track: "Consensus & Fault Tolerance",
+    trackName: "Consensus & Fault Tolerance",
     primaryAuthorName: "Prof. Marcus Thorne",
+    authorName: "Prof. Marcus Thorne",
     authorEmail: "m.thorne@oxford.ac.uk",
+    authorAffiliations: ["University of Oxford"],
     topics: ["Consensus", "Fault Tolerance", "Distributed Systems"],
     keywords: ["raft", "byzantine", "consensus"],
     assignedReviewersCount: 2,
+    requiredReviews: 2,
     requiredReviewsCount: 2,
     status: "UNDER_REVIEW",
+    createdAt: "2026-08-18T18:15:28.285836Z",
   },
   {
     id: "m-3",
     paperCode: "ICDCS-2026-003",
     title: "Scalable Zero-Knowledge Proofs for Auditable Resource Allocation",
     track: "Security & Privacy",
+    trackName: "Security & Privacy",
     primaryAuthorName: "Dr. Aris Thorne",
+    authorName: "Dr. Aris Thorne",
     authorEmail: "aris.thorne@ethz.ch",
+    authorAffiliations: ["ETH Zurich"],
     topics: ["Cryptography", "Security", "Audit Systems"],
     keywords: ["zk-snarks", "audit", "privacy"],
     assignedReviewersCount: 2,
+    requiredReviews: 2,
     requiredReviewsCount: 2,
     status: "UNDER_REVIEW",
+    createdAt: "2026-08-19T10:15:28.285836Z",
   },
   {
     id: "m-4",
     paperCode: "ICDCS-2026-004",
     title: "Graph Neural Networks for Topological Partitioning",
     track: "AI & Distributed Computing",
+    trackName: "AI & Distributed Computing",
     primaryAuthorName: "Prof. Sophia Chen",
+    authorName: "Prof. Sophia Chen",
     authorEmail: "schen@stanford.edu",
+    authorAffiliations: ["Stanford University"],
     topics: ["Machine Learning", "Graph Algorithms", "Optimization"],
     keywords: ["gnn", "graph", "partitioning"],
     assignedReviewersCount: 2,
+    requiredReviews: 2,
     requiredReviewsCount: 2,
     status: "UNDER_REVIEW",
+    createdAt: "2026-08-19T14:15:28.285836Z",
   },
   {
     id: "m-5",
     paperCode: "ICDCS-2026-005",
     title: "Sub-Millisecond Bipartite Matching Under Capacity Constraints",
     track: "Systems & Algorithms",
+    trackName: "Systems & Algorithms",
     primaryAuthorName: "David Miller",
+    authorName: "David Miller",
     authorEmail: "dmiller@cmu.edu",
+    authorAffiliations: ["Carnegie Mellon University"],
     topics: ["Network Flow", "Combinatorial Optimization", "Graph Algorithms"],
     keywords: ["edmonds-karp", "dinic", "matching"],
     assignedReviewersCount: 2,
+    requiredReviews: 2,
     requiredReviewsCount: 2,
     status: "UNDER_REVIEW",
+    createdAt: "2026-08-20T09:15:28.285836Z",
   },
   {
     id: "m-6",
     paperCode: "ICDCS-2026-006",
     title: "Optimistic Concurrency Control in Globally Replicated Databases",
     track: "Distributed Storage",
+    trackName: "Distributed Storage",
     primaryAuthorName: "Dr. Kenji Sato",
+    authorName: "Dr. Kenji Sato",
     authorEmail: "ksato@tokyo-u.ac.jp",
+    authorAffiliations: ["University of Tokyo"],
     topics: ["Databases", "Distributed Systems", "Concurrency"],
     keywords: ["transactions", "storage", "replication"],
     assignedReviewersCount: 2,
+    requiredReviews: 2,
     requiredReviewsCount: 2,
     status: "UNDER_REVIEW",
+    createdAt: "2026-08-20T11:15:28.285836Z",
+  },
+  {
+    id: "m-7",
+    paperCode: "ICDCS-2026-007",
+    title: "Attention-Driven State Machine Replication in Asynchronous Distributed Networks",
+    track: "Systems & Algorithms",
+    trackName: "Systems & Algorithms",
+    primaryAuthorName: "Ashish Vaswani",
+    authorName: "Ashish Vaswani",
+    authorEmail: "author.vaswani@google.com",
+    authorAffiliations: ["Google Research", "Essential AI"],
+    topics: ["Distributed Systems", "Consensus", "Machine Learning"],
+    keywords: ["transformer", "state-machine", "replication"],
+    assignedReviewersCount: 2,
+    requiredReviews: 2,
+    requiredReviewsCount: 2,
+    status: "UNDER_REVIEW",
+    createdAt: "2026-08-21T08:00:00.000000Z",
   },
 ];
 
@@ -478,8 +526,8 @@ export async function GET(req: NextRequest, { params }: { params: { path?: strin
     // Compute overlapping topics
     const msTopics = ms.topics || [];
     const revTopics = rev.topics || [];
-    const matchingTopics = msTopics.filter((t) =>
-      revTopics.some((rt) => rt.toLowerCase().includes(t.toLowerCase()) || t.toLowerCase().includes(rt.toLowerCase()))
+    const matchingTopics = msTopics.filter((t: string) =>
+      revTopics.some((rt: string) => rt.toLowerCase().includes(t.toLowerCase()) || t.toLowerCase().includes(rt.toLowerCase()))
     );
     if (matchingTopics.length === 0 && msTopics.length > 0) {
       matchingTopics.push(msTopics[0]);
@@ -542,16 +590,22 @@ export async function POST(req: NextRequest, { params }: { params: { path?: stri
 
   // Manuscript Creation
   if (pathStr === "manuscripts") {
+    const authorName = body.authorName || body.primaryAuthorName || "Research Author";
+    const track = body.track || body.trackName || "Systems & Algorithms";
     const newDoc = {
       id: "m-" + Date.now(),
       paperCode: `ICDCS-2026-${String(mockManuscripts.length + 1).padStart(3, "0")}`,
       title: body.title || "Untitled Paper",
-      track: body.track || "Systems & Algorithms",
-      primaryAuthorName: body.primaryAuthorName || "Research Author",
+      track,
+      trackName: track,
+      primaryAuthorName: authorName,
+      authorName,
       authorEmail: body.authorEmail || "author@university.edu",
+      authorAffiliations: body.authorAffiliations && body.authorAffiliations.length > 0 ? body.authorAffiliations : ["Research Institution"],
       topics: body.topics && body.topics.length > 0 ? body.topics : ["Distributed Systems", "Graph Algorithms"],
       keywords: body.keywords && body.keywords.length > 0 ? body.keywords : ["max-flow", "matching"],
       assignedReviewersCount: 0,
+      requiredReviews: Number(body.requiredReviews) || 2,
       requiredReviewsCount: Number(body.requiredReviews) || 2,
       status: "SUBMITTED",
       createdAt: new Date().toISOString(),
@@ -574,6 +628,20 @@ export async function POST(req: NextRequest, { params }: { params: { path?: stri
 
   // Conference Creation
   if (pathStr === "conferences") {
+    const roleHeader = req.headers.get("x-user-role");
+    const authHeader = req.headers.get("authorization") || "";
+    if (
+      roleHeader === "AUTHOR" ||
+      roleHeader === "REVIEWER" ||
+      authHeader.includes("author") ||
+      authHeader.includes("reviewer")
+    ) {
+      return NextResponse.json(
+        { error: "FORBIDDEN", message: "Access Denied: Only System Administrators can provision conferences." },
+        { status: 403 }
+      );
+    }
+
     const newConf = {
       id: `conf-${Date.now()}`,
       code: body.code || `CONF-${Date.now()}`,
@@ -595,6 +663,19 @@ export async function POST(req: NextRequest, { params }: { params: { path?: stri
 
   // Reviewer Creation
   if (pathStr === "reviewers") {
+    const roleHeader = req.headers.get("x-user-role");
+    const authHeader = req.headers.get("authorization") || "";
+    if (
+      roleHeader === "AUTHOR" ||
+      roleHeader === "REVIEWER" ||
+      authHeader.includes("author") ||
+      authHeader.includes("reviewer")
+    ) {
+      return NextResponse.json(
+        { error: "FORBIDDEN", message: "Access Denied: Only Conference Chairs can invite Program Committee reviewers." },
+        { status: 403 }
+      );
+    }
     const newRev = {
       id: `r-${Date.now()}`,
       userName: body.userName || "Dr. Reviewer",
@@ -794,6 +875,20 @@ export async function POST(req: NextRequest, { params }: { params: { path?: stri
 
   // Matching Commit
   if (pathStr.startsWith("matching/commit")) {
+    const roleHeader = req.headers.get("x-user-role");
+    const authHeader = req.headers.get("authorization") || "";
+    if (
+      roleHeader === "AUTHOR" ||
+      roleHeader === "REVIEWER" ||
+      authHeader.includes("author") ||
+      authHeader.includes("reviewer")
+    ) {
+      return NextResponse.json(
+        { error: "FORBIDDEN", message: "Access Denied: Only Conference Chairs and System Administrators can commit match allocations." },
+        { status: 403 }
+      );
+    }
+
     const runId = pathStr.split("/")[2] || `run-${Date.now()}`;
     mockManuscripts.forEach((m) => {
       m.status = "UNDER_REVIEW";
@@ -1095,6 +1190,25 @@ export async function PATCH(req: NextRequest, { params }: { params: { path?: str
 
   if (pathStr.startsWith("manuscripts/")) {
     const id = pathStr.split("/")[1];
+
+    // RBAC Security Gate: Authors & Reviewers cannot tamper with review decisions
+    const roleHeader = req.headers.get("x-user-role");
+    const authHeader = req.headers.get("authorization") || "";
+    if (
+      roleHeader === "AUTHOR" ||
+      roleHeader === "REVIEWER" ||
+      authHeader.includes("author") ||
+      authHeader.includes("reviewer")
+    ) {
+      return NextResponse.json(
+        {
+          error: "FORBIDDEN",
+          message: "Access Denied: Only Conference Chairs and System Administrators are authorized to alter manuscript review statuses.",
+        },
+        { status: 403 }
+      );
+    }
+
     const ms = mockManuscripts.find((m) => m.id === id);
     if (ms) {
       if (body.status) ms.status = body.status;
@@ -1106,7 +1220,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { path?: str
         entityType: "MANUSCRIPT",
         entityId: id,
         ipAddress: "127.0.0.1",
-        details: `Manuscript ${ms.paperCode || id} status changed to ${ms.status}`,
+        details: `Manuscript ${ms.paperCode || id} status changed to ${ms.status} by authorized administrator`,
       });
       return NextResponse.json({ success: true, message: "Manuscript updated successfully", data: ms });
     }

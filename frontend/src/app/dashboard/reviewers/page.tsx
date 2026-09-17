@@ -13,14 +13,38 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { Card3D } from "@/components/ui/Card3D";
+import { useAuth } from "@/lib/auth";
+import Link from "next/link";
 
 export default function ReviewersRosterPage() {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: reviewers, isLoading } = useQuery({
     queryKey: ["reviewers"],
     queryFn: () => api.getReviewers(),
+    enabled: user?.role !== "AUTHOR",
   });
+
+  if (user?.role === "AUTHOR") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8 rounded-2xl border border-ink-black/10 bg-white shadow-xl text-center space-y-4">
+        <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200 text-purple-700">
+          <ShieldAlert className="h-10 w-10" />
+        </div>
+        <h2 className="text-xl font-bold text-ink-black">Double-Blind Review Integrity Protected</h2>
+        <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
+          In accordance with ICDCS double-blind peer review protocols, manuscript authors are restricted from viewing Program Committee reviewer rosters, assigned workloads, or institutional affiliations during the active evaluation cycle.
+        </p>
+        <Link
+          href="/dashboard/manuscripts"
+          className="liquid-glass rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black inline-flex items-center gap-2"
+        >
+          <span>View Your Manuscripts</span>
+        </Link>
+      </div>
+    );
+  }
 
   const filteredReviewers = (reviewers || []).filter((r) => {
     const matchesSearch =

@@ -25,12 +25,21 @@ export const apiClient = axios.create({
   },
 });
 
-// Request interceptor to attach JWT token
+// Request interceptor to attach JWT token and user role
 apiClient.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("allocflow_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    const savedUser = localStorage.getItem("allocflow_user");
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        if (parsed?.role) {
+          config.headers["x-user-role"] = parsed.role;
+        }
+      } catch (e) {}
     }
   }
   return config;

@@ -30,7 +30,13 @@ import {
   Cell,
 } from "recharts";
 
+import { useAuth } from "@/lib/auth";
+
 export default function DashboardOverviewPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
+  const isAuthor = user?.role === "AUTHOR";
+  const isReviewer = user?.role === "REVIEWER";
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -89,32 +95,62 @@ export default function DashboardOverviewPage() {
             <h1
               className="text-4xl tracking-tight text-ink-black font-heading"
             >
-              Conference Operations
+              {isAuthor
+                ? "Author Operations Portal"
+                : isReviewer
+                ? "Peer Reviewer Portal"
+                : "Conference Operations"}
             </h1>
             <span className="border border-green-500/30 bg-green-500/10 px-2 py-0.5 text-[9px] font-space font-bold text-green-400 uppercase tracking-widest animate-pulse mt-2">
-              Live Allocation
+              {isAuthor ? "Active Submissions" : isReviewer ? "Evaluation Mode" : "Live Allocation"}
             </span>
           </div>
           <p className="mt-2 text-xs font-space text-muted uppercase tracking-wider">
-            Target: {stats.activeConferenceName} ({stats.activeConferenceCode}) // Max-Flow Engine Running
+            Target: {stats.activeConferenceName} ({stats.activeConferenceCode}) //{" "}
+            {isAuthor
+              ? "Submissions & Double-Blind Review Tracking"
+              : isReviewer
+              ? "Peer Evaluation & Feedback Verification"
+              : "Max-Flow Engine Running"}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/dashboard/matching"
-            className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-orange bg-accent-orange/10 px-6 font-space text-[11px] font-bold text-accent-orange uppercase tracking-widest transition-all hover:bg-accent-orange hover:text-ink-black"
-          >
-            <GitMerge className="mr-2 h-4 w-4" />
-            <span>Launch Cockpit</span>
-          </Link>
-          <Link
-            href="/dashboard/comparison"
-            className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-blue bg-accent-blue/10 px-6 font-space text-[11px] font-bold text-accent-blue uppercase tracking-widest transition-all hover:bg-accent-blue hover:text-ink-black"
-          >
-            <Sparkles className="mr-2 h-4 w-4" />
-            <span>Tri-Algo Lab</span>
-          </Link>
+          {isAdmin ? (
+            <>
+              <Link
+                href="/dashboard/matching"
+                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-orange bg-accent-orange/10 px-6 font-space text-[11px] font-bold text-accent-orange uppercase tracking-widest transition-all hover:bg-accent-orange hover:text-ink-black"
+              >
+                <GitMerge className="mr-2 h-4 w-4" />
+                <span>Launch Cockpit</span>
+              </Link>
+              <Link
+                href="/dashboard/comparison"
+                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-blue bg-accent-blue/10 px-6 font-space text-[11px] font-bold text-accent-blue uppercase tracking-widest transition-all hover:bg-accent-blue hover:text-ink-black"
+              >
+                <Sparkles className="mr-2 h-4 w-4" />
+                <span>Tri-Algo Lab</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/dashboard/manuscripts"
+                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-orange bg-accent-orange/10 px-6 font-space text-[11px] font-bold text-accent-orange uppercase tracking-widest transition-all hover:bg-accent-orange hover:text-ink-black"
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                <span>{isAuthor ? "Submit Manuscript" : "Assigned Papers"}</span>
+              </Link>
+              <Link
+                href="/dashboard/manuscripts"
+                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-ink-black/20 bg-ink-black/5 px-6 font-space text-[11px] font-bold text-ink-black uppercase tracking-widest transition-all hover:bg-ink-black hover:text-beige-bg"
+              >
+                <Clock className="mr-2 h-4 w-4" />
+                <span>{isAuthor ? "My Submissions" : "Review Progress"}</span>
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
