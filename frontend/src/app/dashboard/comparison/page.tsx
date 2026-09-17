@@ -30,6 +30,7 @@ import {
 } from "recharts";
 import { formatMs } from "@/lib/utils";
 import { Card3D } from "@/components/ui/Card3D";
+import { Tooltip as UITooltip, InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function AlgorithmComparisonPage() {
   const [mounted, setMounted] = useState(false);
@@ -100,22 +101,24 @@ export default function AlgorithmComparisonPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => compareMutation.mutate()}
-          disabled={compareMutation.isPending}
-          className="liquid-glass rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black flex items-center gap-2 disabled:opacity-50"
-        >
-          {compareMutation.isPending ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-ink-black border-t-transparent" />
-          ) : (
-            <Play className="h-4 w-4 text-ink-black" />
-          )}
-          <span>
-            {compareMutation.isPending
-              ? "Executing Sequential Trials..."
-              : "Run Tri-Algorithm Benchmark"}
-          </span>
-        </button>
+        <UITooltip content="Execute sequential benchmark trials across identical graph topologies for all 3 algorithms">
+          <button
+            onClick={() => compareMutation.mutate()}
+            disabled={compareMutation.isPending}
+            className="liquid-glass rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black flex items-center gap-2 disabled:opacity-50"
+          >
+            {compareMutation.isPending ? (
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-ink-black border-t-transparent" />
+            ) : (
+              <Play className="h-4 w-4 text-ink-black" />
+            )}
+            <span>
+              {compareMutation.isPending
+                ? "Executing Sequential Trials..."
+                : "Run Tri-Algorithm Benchmark"}
+            </span>
+          </button>
+        </UITooltip>
       </div>
 
       {/* BENCHMARK PARAMETERS CONTROLS */}
@@ -131,7 +134,10 @@ export default function AlgorithmComparisonPage() {
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 text-xs">
           <div>
-            <label className="text-muted-foreground font-medium">Manuscripts (|P|)</label>
+            <div className="flex items-center gap-1">
+              <label className="text-muted-foreground font-medium">Manuscripts (|P|)</label>
+              <InfoTooltip content="Number of paper demand nodes generated in synthetic bipartite network" />
+            </div>
             <input
               type="number"
               min="5"
@@ -143,7 +149,10 @@ export default function AlgorithmComparisonPage() {
           </div>
 
           <div>
-            <label className="text-muted-foreground font-medium">Reviewers (|R|)</label>
+            <div className="flex items-center gap-1">
+              <label className="text-muted-foreground font-medium">Reviewers (|R|)</label>
+              <InfoTooltip content="Number of reviewer sink nodes in the bipartite set" />
+            </div>
             <input
               type="number"
               min="5"
@@ -155,7 +164,10 @@ export default function AlgorithmComparisonPage() {
           </div>
 
           <div>
-            <label className="text-muted-foreground font-medium">Reviews / Paper (k)</label>
+            <div className="flex items-center gap-1">
+              <label className="text-muted-foreground font-medium">Reviews / Paper (k)</label>
+              <InfoTooltip content="Target reviews required per manuscript" />
+            </div>
             <input
               type="number"
               min="1"
@@ -167,7 +179,10 @@ export default function AlgorithmComparisonPage() {
           </div>
 
           <div>
-            <label className="text-muted-foreground font-medium">Reviewer Cap (C_r)</label>
+            <div className="flex items-center gap-1">
+              <label className="text-muted-foreground font-medium">Reviewer Cap (C_r)</label>
+              <InfoTooltip content="Maximum workload allocation allowed per reviewer" />
+            </div>
             <input
               type="number"
               min="1"
@@ -179,23 +194,27 @@ export default function AlgorithmComparisonPage() {
           </div>
 
           <div>
-            <label className="text-muted-foreground font-medium">Warmup Trials</label>
+            <div className="flex items-center gap-1">
+              <label className="text-muted-foreground font-medium">Random Seed</label>
+              <InfoTooltip content="Deterministic PRNG seed ensuring identical graph structure across all algorithms" />
+            </div>
             <input
               type="number"
-              min="1"
-              max="10"
-              value={warmups}
-              onChange={(e) => setWarmups(parseInt(e.target.value) || 3)}
+              value={seed}
+              onChange={(e) => setSeed(parseInt(e.target.value) || 482917)}
               className="mt-1.5 w-full rounded-xl border border-ink-black/10 bg-white shadow-inner py-2 px-3 text-xs font-mono text-ink-black focus:border-ink-black/30 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="text-muted-foreground font-medium">Measured Trials</label>
+            <div className="flex items-center gap-1">
+              <label className="text-muted-foreground font-medium">Measured Trials</label>
+              <InfoTooltip content="Number of repeated runs to compute statistical median and p95 latency" />
+            </div>
             <input
               type="number"
               min="3"
-              max="50"
+              max="30"
               value={trials}
               onChange={(e) => setTrials(parseInt(e.target.value) || 10)}
               className="mt-1.5 w-full rounded-xl border border-ink-black/10 bg-white shadow-inner py-2 px-3 text-xs font-mono text-ink-black focus:border-ink-black/30 focus:outline-none"

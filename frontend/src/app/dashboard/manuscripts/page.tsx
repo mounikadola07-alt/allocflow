@@ -18,16 +18,20 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import type { Manuscript, ManuscriptStatus } from "@/types";
+import { Tooltip, InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function ManuscriptsPage() {
   const { user } = useAuth();
   const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
   const isAuthor = user?.role === "AUTHOR";
+  const isReviewer = user?.role === "REVIEWER";
+  const canChangeStatus = isAdmin || isReviewer;
 
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [authorScope, setAuthorScope] = useState<"MY_PAPERS" | "ALL">(isAuthor ? "MY_PAPERS" : "ALL");
+  const [reviewerScope, setReviewerScope] = useState<"ASSIGNED" | "ALL">(isReviewer ? "ASSIGNED" : "ALL");
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   // Form state
@@ -99,11 +103,23 @@ export default function ManuscriptsPage() {
       if (!isMine) return false;
     }
 
+    // If reviewer in "Assigned to Me" mode, filter to papers aligned with their research domain
+    if (isReviewer && reviewerScope === "ASSIGNED") {
+      const reviewerTopics = ["Distributed Systems", "Graph Algorithms", "Network Flow", "Machine Learning"];
+      const isAssigned =
+        m.id === "m-1" ||
+        m.id === "m-4" ||
+        m.id === "m-5" ||
+        m.id === "m-7" ||
+        (m.topics && m.topics.some((t: string) => reviewerTopics.includes(t)));
+      if (!isAssigned) return false;
+    }
+
     const authorNameStr = m.authorName || m.primaryAuthorName || "";
     const matchesSearch =
       m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       authorNameStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (m.topics && m.topics.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase())));
+      (m.topics && m.topics.some((t: string) => t.toLowerCase().includes(searchTerm.toLowerCase())));
     const matchesStatus = selectedStatus === "ALL" || m.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
@@ -146,26 +162,59 @@ export default function ManuscriptsPage() {
 
           {isAuthor && (
             <div className="flex items-center gap-1 p-1 bg-ink-black/5 border border-ink-black/10 rounded-xl text-xs font-mono">
-              <button
-                onClick={() => setAuthorScope("MY_PAPERS")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  authorScope === "MY_PAPERS"
-                    ? "bg-white shadow-md text-ink-black font-bold"
-                    : "text-muted-foreground hover:text-ink-black"
-                }`}
-              >
-                My Submissions
-              </button>
-              <button
-                onClick={() => setAuthorScope("ALL")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  authorScope === "ALL"
-                    ? "bg-white shadow-md text-ink-black font-bold"
-                    : "text-muted-foreground hover:text-ink-black"
-                }`}
-              >
-                All Papers
-              </button>
+              <Tooltip content="Show only manuscripts submitted by your account">
+                <button
+                  onClick={() => setAuthorScope("MY_PAPERS")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    authorScope === "MY_PAPERS"
+                      ? "bg-white shadow-md text-ink-black font-bold"
+                      : "text-muted-foreground hover:text-ink-black"
+                  }`}
+                >
+                  My Submissions
+                </button>
+              </Tooltip>
+              <Tooltip content="Browse all conference submissions under double-blind review">
+                <button
+                  onClick={() => setAuthorScope("ALL")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    authorScope === "ALL"
+                      ? "bg-white shadow-md text-ink-black font-bold"
+                      : "text-muted-foreground hover:text-ink-black"
+                  }`}
+                >
+                  All Papers
+                </button>
+              </Tooltip>
+            </div>
+          )}
+
+          {isReviewer && (
+            <div className="flex items-center gap-1 p-1 bg-purple-50 border border-purple-200 rounded-xl text-xs font-mono">
+              <Tooltip content="Show manuscripts assigned to your review workload">
+                <button
+                  onClick={() => setReviewerScope("ASSIGNED")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    reviewerScope === "ASSIGNED"
+                      ? "bg-white shadow-md text-purple-900 font-bold"
+                      : "text-purple-700 hover:text-purple-950"
+                  }`}
+                >
+                  Assigned to Me
+                </button>
+              </Tooltip>
+              <Tooltip content="Show all conference manuscripts">
+                <button
+                  onClick={() => setReviewerScope("ALL")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    reviewerScope === "ALL"
+                      ? "bg-white shadow-md text-purple-900 font-bold"
+                      : "text-purple-700 hover:text-purple-950"
+                  }`}
+                >
+                  All Papers
+                </button>
+              </Tooltip>
             </div>
           )}
         </div>
@@ -176,7 +225,7 @@ export default function ManuscriptsPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="rounded-xl border border-ink-black/10 bg-white shadow-2xl rounded-2xl px-3 py-2 text-xs text-ink-black focus:outline-none"
+            className="rounded-xl border border-ink-black/10 bg-white shadow-2xl rounded-2xl px-3 py-2 text-xs text-ink-black focus:outline-none cursor-pointer"
           >
             <option value="ALL">All Statuses</option>
             <option value="SUBMITTED">SUBMITTED</option>
@@ -197,10 +246,20 @@ export default function ManuscriptsPage() {
                 <th className="py-3 px-4">Title &amp; Track</th>
                 <th className="py-3 px-4">Author &amp; Affiliation</th>
                 <th className="py-3 px-4">Topics &amp; Keywords</th>
-                <th className="py-3 px-4 text-center">Req. Reviews</th>
+                <th className="py-3 px-4 text-center">
+                  <Tooltip content="Number of independent peer reviews required before editorial decision">
+                    <span className="cursor-help inline-flex items-center gap-1">
+                      Req. Reviews
+                    </span>
+                  </Tooltip>
+                </th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4 text-right">
-                  {isAdmin ? "Admin Status Control" : "Review Phase"}
+                  <Tooltip content={isAdmin ? "Conference Chair status override control" : isReviewer ? "Submit your reviewer score / evaluation status" : "Current double-blind review phase"}>
+                    <span className="cursor-help inline-flex items-center gap-1">
+                      {isAdmin ? "Admin Status Control" : isReviewer ? "Reviewer Evaluation" : "Review Phase"}
+                    </span>
+                  </Tooltip>
                 </th>
               </tr>
             </thead>
@@ -238,7 +297,7 @@ export default function ManuscriptsPage() {
 
                     <td className="py-3 px-4 max-w-xs">
                       <div className="flex flex-wrap gap-1">
-                        {(m.topics || []).map((t, idx) => (
+                        {(m.topics || []).map((t: string, idx: number) => (
                           <span
                             key={idx}
                             className="rounded bg-white shadow-md border border-ink-black/15 px-1.5 py-0.5 text-[10px] font-medium text-ink-black/90"
@@ -248,7 +307,7 @@ export default function ManuscriptsPage() {
                         ))}
                       </div>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {(m.keywords || []).map((k, idx) => (
+                        {(m.keywords || []).map((k: string, idx: number) => (
                           <span
                             key={idx}
                             className="rounded bg-ink-black/5 px-1.5 py-0.5 text-[9px] text-muted-foreground"
@@ -264,55 +323,74 @@ export default function ManuscriptsPage() {
                     </td>
 
                     <td className="py-3 px-4">
-                      <span
-                        className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold border ${
-                          m.status === "SUBMITTED"
-                            ? "bg-white shadow-md text-ink-black border-ink-black/20"
-                            : m.status === "UNDER_REVIEW"
-                            ? "bg-purple-100 text-purple-800 border-purple-500/40"
-                            : m.status === "ACCEPTED"
-                            ? "bg-emerald-100 text-emerald-800 border-emerald-500/40"
-                            : "bg-ink-black/5 text-muted-foreground border-ink-black/10"
-                        }`}
-                      >
-                        {m.status}
-                      </span>
+                      <Tooltip content={
+                        m.status === "SUBMITTED"
+                          ? "Manuscript received and awaiting reviewer allocation"
+                          : m.status === "UNDER_REVIEW"
+                          ? "Active double-blind evaluation by assigned Program Committee reviewers"
+                          : m.status === "REVIEWS_COMPLETE"
+                          ? "Required reviews submitted; ready for editorial decision"
+                          : m.status === "ACCEPTED"
+                          ? "Officially accepted into conference proceedings"
+                          : "Decision complete; manuscript rejected"
+                      }>
+                        <span
+                          className={`inline-block cursor-help rounded-full px-2.5 py-0.5 text-[10px] font-semibold border ${
+                            m.status === "SUBMITTED"
+                              ? "bg-white shadow-md text-ink-black border-ink-black/20"
+                              : m.status === "UNDER_REVIEW"
+                              ? "bg-purple-100 text-purple-800 border-purple-500/40"
+                              : m.status === "ACCEPTED"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-500/40"
+                              : m.status === "REJECTED"
+                              ? "bg-rose-100 text-rose-800 border-rose-500/40"
+                              : "bg-ink-black/5 text-muted-foreground border-ink-black/10"
+                          }`}
+                        >
+                          {m.status}
+                        </span>
+                      </Tooltip>
                     </td>
 
                     <td className="py-3 px-4 text-right">
-                      {isAdmin ? (
-                        <select
-                          value={m.status}
-                          onChange={(e) =>
-                            statusMutation.mutate({ id: m.id, status: e.target.value })
-                          }
-                          className="rounded-xl border border-ink-black/20 bg-white shadow-sm px-2.5 py-1 text-[11px] font-mono font-medium text-ink-black focus:outline-none"
-                        >
-                          <option value="SUBMITTED">SUBMITTED</option>
-                          <option value="UNDER_REVIEW">UNDER_REVIEW</option>
-                          <option value="REVIEWS_COMPLETE">REVIEWS_COMPLETE</option>
-                          <option value="ACCEPTED">ACCEPTED</option>
-                          <option value="REJECTED">REJECTED</option>
-                        </select>
+                      {canChangeStatus ? (
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Tooltip content={isReviewer ? "Submit peer review status evaluation" : "Update manuscript official status"}>
+                            <select
+                              value={m.status}
+                              onChange={(e) =>
+                                statusMutation.mutate({ id: m.id, status: e.target.value })
+                              }
+                              className="rounded-xl border border-ink-black/20 bg-white shadow-sm px-2.5 py-1 text-[11px] font-mono font-medium text-ink-black focus:outline-none cursor-pointer hover:border-ink-black/40 transition-colors"
+                            >
+                              <option value="SUBMITTED">SUBMITTED</option>
+                              <option value="UNDER_REVIEW">UNDER_REVIEW</option>
+                              <option value="REVIEWS_COMPLETE">REVIEWS_COMPLETE</option>
+                              <option value="ACCEPTED">ACCEPTED</option>
+                              <option value="REJECTED">REJECTED</option>
+                            </select>
+                          </Tooltip>
+                        </div>
                       ) : (
                         <div className="flex items-center justify-end gap-1.5 text-right font-mono">
-                          <span className="px-2.5 py-1 rounded-md bg-ink-black/5 border border-ink-black/10 text-[10px] text-muted-foreground">
-                            {m.status === "SUBMITTED"
-                              ? "Awaiting PC"
-                              : m.status === "UNDER_REVIEW"
-                              ? "In Review"
-                              : m.status === "ACCEPTED"
-                              ? "Accepted ✓"
-                              : m.status === "REJECTED"
-                              ? "Rejected ✗"
-                              : "Deciding"}
-                          </span>
-                          <span
-                            className="text-[10px] text-muted-foreground/60 font-semibold"
-                            title="Only Conference Chairs can modify manuscript decision status"
-                          >
-                            (Locked)
-                          </span>
+                          <Tooltip content="Double-blind peer review in progress. Only assigned reviewers and conference chairs can alter review statuses.">
+                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-ink-black/5 border border-ink-black/10 text-[10px] text-muted-foreground cursor-help">
+                              <span>
+                                {m.status === "SUBMITTED"
+                                  ? "Awaiting PC"
+                                  : m.status === "UNDER_REVIEW"
+                                  ? "In Review"
+                                  : m.status === "ACCEPTED"
+                                  ? "Accepted ✓"
+                                  : m.status === "REJECTED"
+                                  ? "Rejected ✗"
+                                  : "Deciding"}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground/60 font-semibold">
+                                (Locked)
+                              </span>
+                            </div>
+                          </Tooltip>
                         </div>
                       )}
                     </td>

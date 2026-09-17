@@ -414,7 +414,12 @@ export async function GET(req: NextRequest, { params }: { params: { path?: strin
 
   // Standalone Serverless Fallbacks
   if (pathStr === "conferences" || pathStr === "") {
-    return NextResponse.json(mockConferences);
+    const enriched = mockConferences.map((c) => ({
+      ...c,
+      manuscriptCount: mockManuscripts.length,
+      reviewerCount: mockReviewers.length,
+    }));
+    return NextResponse.json(enriched);
   }
 
   if (pathStr.startsWith("conferences/")) {
@@ -424,7 +429,11 @@ export async function GET(req: NextRequest, { params }: { params: { path?: strin
       return NextResponse.json(mockTracks);
     }
     const conf = mockConferences.find((c) => c.id === confId) || mockConferences[0];
-    return NextResponse.json(conf);
+    return NextResponse.json({
+      ...conf,
+      manuscriptCount: mockManuscripts.length,
+      reviewerCount: mockReviewers.length,
+    });
   }
 
   if (
@@ -562,12 +571,27 @@ export async function GET(req: NextRequest, { params }: { params: { path?: strin
   }
 
   if (pathStr === "auth/me") {
+    const roleHeader = req.headers.get("x-user-role");
+    const authHeader = req.headers.get("authorization") || "";
+
+    let role = roleHeader || "SUPER_ADMIN";
+    if (!roleHeader) {
+      if (authHeader.includes("author")) role = "AUTHOR";
+      else if (authHeader.includes("reviewer")) role = "REVIEWER";
+      else if (authHeader.includes("chair")) role = "CONFERENCE_ADMIN";
+    }
+
+    const userProfiles: Record<string, { id: string; email: string; fullName: string; role: string }> = {
+      AUTHOR: { id: "u-author", email: "author.vaswani@google.com", fullName: "Ashish Vaswani", role: "AUTHOR" },
+      REVIEWER: { id: "u-reviewer", email: "reviewer.chen@stanford.edu", fullName: "Dr. Sophia Chen", role: "REVIEWER" },
+      CONFERENCE_ADMIN: { id: "u-chair", email: "chair@icdcs2026.org", fullName: "Conference Chair", role: "CONFERENCE_ADMIN" },
+      SUPER_ADMIN: { id: "u-admin", email: "admin@allocflow.io", fullName: "System Administrator", role: "SUPER_ADMIN" },
+    };
+
+    const profile = userProfiles[role] || userProfiles["SUPER_ADMIN"];
     return NextResponse.json({
-      id: "u-admin",
-      email: "admin@allocflow.io",
-      fullName: "System Administrator",
-      role: "SUPER_ADMIN",
-      token: "jwt-allocflow-token-live",
+      ...profile,
+      token: `jwt-allocflow-token-${role.toLowerCase()}`,
     });
   }
 
@@ -1145,26 +1169,32 @@ export async function POST(req: NextRequest, { params }: { params: { path?: stri
   // Auth Login / Register
   if (pathStr === "auth/login" || pathStr === "auth/register") {
     let email = body.email || "";
-    let role = "SUPER_ADMIN";
-    let fullName = "System Administrator";
+    let requestedRole = body.role;
+    let role = requestedRole || "SUPER_ADMIN";
+    let fullName = body.fullName || "System Administrator";
 
-    if (email === "chair@icdcs2026.org") {
-      role = "CONFERENCE_ADMIN";
-      fullName = "Conference Chair";
-    } else if (email === "reviewer.chen@stanford.edu") {
-      role = "REVIEWER";
-      fullName = "PC Reviewer";
-    } else if (email === "author.vaswani@google.com") {
-      role = "AUTHOR";
-      fullName = "Author";
+    if (!requestedRole) {
+      if (email === "chair@icdcs2026.org" || email.includes("chair")) {
+        role = "CONFERENCE_ADMIN";
+        fullName = body.fullName || "Conference Chair";
+      } else if (email === "reviewer.chen@stanford.edu" || email.includes("reviewer")) {
+        role = "REVIEWER";
+        fullName = body.fullName || "Dr. Sophia Chen";
+      } else if (email === "author.vaswani@google.com" || email.includes("author")) {
+        role = "AUTHOR";
+        fullName = body.fullName || "Ashish Vaswani";
+      } else if (email === "admin@allocflow.io" || email.includes("admin")) {
+        role = "SUPER_ADMIN";
+        fullName = body.fullName || "System Administrator";
+      }
     }
 
     return NextResponse.json({
-      token: "jwt-allocflow-token-live",
+      token: `jwt-allocflow-token-${role.toLowerCase()}`,
       tokenType: "Bearer",
       expiresIn: 3600,
       user: {
-        id: "u-mock",
+        id: `u-${Date.now()}`,
         email: email || "admin@allocflow.io",
         fullName,
         role,
@@ -1191,19 +1221,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { path?: str
   if (pathStr.startsWith("manuscripts/")) {
     const id = pathStr.split("/")[1];
 
-    // RBAC Security Gate: Authors & Reviewers cannot tamper with review decisions
+    // RBAC Security Gate: Authors cannot alter manuscript review statuses.
+    // Reviewers (evaluation recommendations) and Administrators (decision management) are permitted.
     const roleHeader = req.headers.get("x-user-role");
     const authHeader = req.headers.get("authorization") || "";
     if (
       roleHeader === "AUTHOR" ||
-      roleHeader === "REVIEWER" ||
-      authHeader.includes("author") ||
-      authHeader.includes("reviewer")
+      authHeader.includes("author")
     ) {
       return NextResponse.json(
         {
           error: "FORBIDDEN",
-          message: "Access Denied: Only Conference Chairs and System Administrators are authorized to alter manuscript review statuses.",
+          message: "Access Denied: Authors cannot alter manuscript review statuses.",
         },
         { status: 403 }
       );
@@ -1212,15 +1241,19 @@ export async function PATCH(req: NextRequest, { params }: { params: { path?: str
     const ms = mockManuscripts.find((m) => m.id === id);
     if (ms) {
       if (body.status) ms.status = body.status;
+      const isRev = roleHeader === "REVIEWER" || authHeader.includes("reviewer");
+      const actorEmail = isRev ? "reviewer.chen@stanford.edu" : "admin@allocflow.io";
+      const actorRoleDesc = isRev ? "PC Reviewer" : "Conference Administrator";
+
       mockAuditLogs.unshift({
         id: `a-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        actorEmail: "admin@allocflow.io",
+        actorEmail,
         action: "STATUS_UPDATED",
         entityType: "MANUSCRIPT",
         entityId: id,
         ipAddress: "127.0.0.1",
-        details: `Manuscript ${ms.paperCode || id} status changed to ${ms.status} by authorized administrator`,
+        details: `Manuscript ${ms.paperCode || id} status changed to ${ms.status} by ${actorRoleDesc}`,
       });
       return NextResponse.json({ success: true, message: "Manuscript updated successfully", data: ms });
     }

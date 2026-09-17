@@ -15,6 +15,7 @@ import {
 import { Card3D } from "@/components/ui/Card3D";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
+import { Tooltip, InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function ReviewersRosterPage() {
   const { user } = useAuth();
@@ -108,45 +109,52 @@ export default function ReviewersRosterPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
-                    {r.active && r.available ? (
-                      <span className="flex items-center gap-1 rounded bg-emerald-100 border border-emerald-500/40 px-2 py-0.5 text-[9px] font-semibold text-emerald-800">
-                        <CheckCircle2 className="h-3 w-3" /> Available
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 rounded bg-rose-100 border border-rose-500/40 px-2 py-0.5 text-[9px] font-semibold text-rose-800">
-                        <XCircle className="h-3 w-3" /> Inactive
-                      </span>
-                    )}
+                    <Tooltip content={r.active && r.available ? "Active and accepting manuscript review assignments" : "Unavailable or capacity saturated"}>
+                      {r.active && r.available ? (
+                        <span className="cursor-help flex items-center gap-1 rounded bg-emerald-100 border border-emerald-500/40 px-2 py-0.5 text-[9px] font-semibold text-emerald-800">
+                          <CheckCircle2 className="h-3 w-3" /> Available
+                        </span>
+                      ) : (
+                        <span className="cursor-help flex items-center gap-1 rounded bg-rose-100 border border-rose-500/40 px-2 py-0.5 text-[9px] font-semibold text-rose-800">
+                          <XCircle className="h-3 w-3" /> Inactive
+                        </span>
+                      )}
+                    </Tooltip>
                   </div>
                 </div>
 
                 {/* Capacity & Workload Bar */}
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-muted-foreground">Workload Saturation:</span>
-                    <span className="font-mono font-bold text-ink-black">
-                      {r.currentWorkload} / {r.maxCapacity} slots ({utilizationPct.toFixed(0)}%)
-                    </span>
+                <Tooltip content={`Reviewer currently assigned ${r.currentWorkload} manuscripts out of ${r.maxCapacity} max capacity`} position="bottom" className="w-full">
+                  <div className="w-full space-y-1.5 text-xs cursor-help">
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-muted-foreground">Workload Saturation:</span>
+                      <span className="font-mono font-bold text-ink-black">
+                        {r.currentWorkload} / {r.maxCapacity} slots ({utilizationPct.toFixed(0)}%)
+                      </span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-white shadow-md overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          utilizationPct >= 100
+                            ? "bg-rose-500"
+                            : utilizationPct >= 50
+                            ? "bg-amber-500"
+                            : "bg-emerald-400"
+                        }`}
+                        style={{ width: `${Math.min(100, utilizationPct)}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-white shadow-md overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        utilizationPct >= 100
-                          ? "bg-rose-500"
-                          : utilizationPct >= 50
-                          ? "bg-amber-500"
-                          : "bg-emerald-400"
-                      }`}
-                      style={{ width: `${Math.min(100, utilizationPct)}%` }}
-                    />
-                  </div>
-                </div>
+                </Tooltip>
 
                 {/* Topic Expertise Badges */}
                 <div className="space-y-1.5 pt-2 border-t border-ink-black/10 text-xs">
-                  <span className="text-[10px] font-semibold uppercase text-muted-foreground">
-                    Topic Expertise:
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-semibold uppercase text-muted-foreground">
+                      Topic Expertise:
+                    </span>
+                    <InfoTooltip content="Primary research topics used for edge compatibility scoring and conflict checks" />
+                  </div>
                   <div className="flex flex-wrap gap-1">
                     {r.topics.map((t, idx) => (
                       <span

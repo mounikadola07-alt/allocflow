@@ -31,6 +31,7 @@ import {
 } from "recharts";
 
 import { useAuth } from "@/lib/auth";
+import { Tooltip as UITooltip } from "@/components/ui/Tooltip";
 
 export default function DashboardOverviewPage() {
   const { user } = useAuth();
@@ -118,37 +119,45 @@ export default function DashboardOverviewPage() {
         <div className="flex items-center gap-3">
           {isAdmin ? (
             <>
-              <Link
-                href="/dashboard/matching"
-                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-orange bg-accent-orange/10 px-6 font-space text-[11px] font-bold text-accent-orange uppercase tracking-widest transition-all hover:bg-accent-orange hover:text-ink-black"
-              >
-                <GitMerge className="mr-2 h-4 w-4" />
-                <span>Launch Cockpit</span>
-              </Link>
-              <Link
-                href="/dashboard/comparison"
-                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-blue bg-accent-blue/10 px-6 font-space text-[11px] font-bold text-accent-blue uppercase tracking-widest transition-all hover:bg-accent-blue hover:text-ink-black"
-              >
-                <Sparkles className="mr-2 h-4 w-4" />
-                <span>Tri-Algo Lab</span>
-              </Link>
+              <UITooltip content="Simulate bipartite graph allocation and inspect residual flow capacities">
+                <Link
+                  href="/dashboard/matching"
+                  className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-orange bg-accent-orange/10 px-6 font-space text-[11px] font-bold text-accent-orange uppercase tracking-widest transition-all hover:bg-accent-orange hover:text-ink-black"
+                >
+                  <GitMerge className="mr-2 h-4 w-4" />
+                  <span>Launch Cockpit</span>
+                </Link>
+              </UITooltip>
+              <UITooltip content="Execute empirical sequential comparison: FF vs EK vs Dinic">
+                <Link
+                  href="/dashboard/comparison"
+                  className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-blue bg-accent-blue/10 px-6 font-space text-[11px] font-bold text-accent-blue uppercase tracking-widest transition-all hover:bg-accent-blue hover:text-ink-black"
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  <span>Tri-Algo Lab</span>
+                </Link>
+              </UITooltip>
             </>
           ) : (
             <>
-              <Link
-                href="/dashboard/manuscripts"
-                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-orange bg-accent-orange/10 px-6 font-space text-[11px] font-bold text-accent-orange uppercase tracking-widest transition-all hover:bg-accent-orange hover:text-ink-black"
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                <span>{isAuthor ? "Submit Manuscript" : "Assigned Papers"}</span>
-              </Link>
-              <Link
-                href="/dashboard/manuscripts"
-                className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-ink-black/20 bg-ink-black/5 px-6 font-space text-[11px] font-bold text-ink-black uppercase tracking-widest transition-all hover:bg-ink-black hover:text-beige-bg"
-              >
-                <Clock className="mr-2 h-4 w-4" />
-                <span>{isAuthor ? "My Submissions" : "Review Progress"}</span>
-              </Link>
+              <UITooltip content={isAuthor ? "Submit a new manuscript for double-blind review" : "View papers assigned to your review workload"}>
+                <Link
+                  href="/dashboard/manuscripts"
+                  className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-accent-orange bg-accent-orange/10 px-6 font-space text-[11px] font-bold text-accent-orange uppercase tracking-widest transition-all hover:bg-accent-orange hover:text-ink-black"
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>{isAuthor ? "Submit Manuscript" : "Assigned Papers"}</span>
+                </Link>
+              </UITooltip>
+              <UITooltip content={isAuthor ? "Filter manuscripts to your submissions" : "Track completed and pending reviews"}>
+                <Link
+                  href="/dashboard/manuscripts"
+                  className="group relative inline-flex h-10 items-center justify-center overflow-hidden border border-ink-black/20 bg-ink-black/5 px-6 font-space text-[11px] font-bold text-ink-black uppercase tracking-widest transition-all hover:bg-ink-black hover:text-beige-bg"
+                >
+                  <Clock className="mr-2 h-4 w-4" />
+                  <span>{isAuthor ? "My Submissions" : "Review Progress"}</span>
+                </Link>
+              </UITooltip>
             </>
           )}
         </div>
@@ -157,97 +166,105 @@ export default function DashboardOverviewPage() {
       {/* TERMINAL KPI STATS GRID */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Manuscripts */}
-        <div className="p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1" style={{backgroundColor:"#C1847B", color:"#0F0F0F"}}>
-          <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-            <FileText className="h-20 w-20" />
-          </div>
-          <div className="relative z-10 flex flex-col h-full justify-between">
-            <p className="text-[10px] font-space font-bold text-muted uppercase tracking-widest">
-              Total Manuscripts
-            </p>
-            <div className="mt-6 flex items-baseline gap-2">
-              <span className="text-4xl font-mono text-ink-black tracking-tighter">
-                {stats.totalManuscripts}
-              </span>
-              <span className="text-[10px] font-space text-muted uppercase">Nodes</span>
+        <UITooltip content="Total papers requiring independent reviewer allocations in active cycle" position="bottom" className="w-full">
+          <div className="w-full p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 cursor-help" style={{backgroundColor:"#C1847B", color:"#0F0F0F"}}>
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <FileText className="h-20 w-20" />
             </div>
-            <div className="mt-4 pt-3 border-t border-ink-black/10">
-              <p className="text-[9px] font-space text-muted uppercase tracking-wider">
-                Target Capacity: {stats.totalRequiredReviews} Reviews
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <p className="text-[10px] font-space font-bold text-muted uppercase tracking-widest">
+                Total Manuscripts
               </p>
+              <div className="mt-6 flex items-baseline gap-2">
+                <span className="text-4xl font-mono text-ink-black tracking-tighter">
+                  {stats.totalManuscripts}
+                </span>
+                <span className="text-[10px] font-space text-muted uppercase">Nodes</span>
+              </div>
+              <div className="mt-4 pt-3 border-t border-ink-black/10">
+                <p className="text-[9px] font-space text-muted uppercase tracking-wider">
+                  Target Capacity: {stats.totalRequiredReviews} Reviews
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </UITooltip>
 
         {/* Reviewer Roster */}
-        <div className="p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1" style={{backgroundColor:"#5D6D7E", color:"#0F0F0F"}}>
-          <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Users className="h-20 w-20 text-accent-blue" />
-          </div>
-          <div className="relative z-10 flex flex-col h-full justify-between">
-            <p className="text-[10px] font-space font-bold text-accent-blue uppercase tracking-widest">
-              PC Reviewers
-            </p>
-            <div className="mt-6 flex items-baseline gap-2">
-              <span className="text-4xl font-mono text-ink-black tracking-tighter">
-                {stats.totalReviewers}
-              </span>
-              <span className="text-[10px] font-space text-accent-blue uppercase">Sinks</span>
+        <UITooltip content="Program Committee reviewers registered with individual slot capacities" position="bottom" className="w-full">
+          <div className="w-full p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 cursor-help" style={{backgroundColor:"#5D6D7E", color:"#0F0F0F"}}>
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Users className="h-20 w-20 text-accent-blue" />
             </div>
-            <div className="mt-4 pt-3 border-t border-ink-black/10">
-              <p className="text-[9px] font-space text-muted uppercase tracking-wider">
-                Max Flow Cap: {stats.totalReviewerCapacity} Slots
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <p className="text-[10px] font-space font-bold text-accent-blue uppercase tracking-widest">
+                PC Reviewers
               </p>
+              <div className="mt-6 flex items-baseline gap-2">
+                <span className="text-4xl font-mono text-ink-black tracking-tighter">
+                  {stats.totalReviewers}
+                </span>
+                <span className="text-[10px] font-space text-accent-blue uppercase">Sinks</span>
+              </div>
+              <div className="mt-4 pt-3 border-t border-ink-black/10">
+                <p className="text-[9px] font-space text-muted uppercase tracking-wider">
+                  Max Flow Cap: {stats.totalReviewerCapacity} Slots
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </UITooltip>
 
         {/* Allocated Pairs */}
-        <div className="p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1" style={{backgroundColor:"#7A9478", color:"#0F0F0F"}}>
-          <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-            <GitMerge className="h-20 w-20 text-[#5B7553]" />
-          </div>
-          <div className="relative z-10 flex flex-col h-full justify-between">
-            <p className="text-[10px] font-space font-bold text-[#5B7553] uppercase tracking-widest">
-              Computed Edges
-            </p>
-            <div className="mt-6 flex items-baseline gap-2">
-              <span className="text-4xl font-mono text-ink-black tracking-tighter">
-                {stats.totalAssignments}
-              </span>
-              <span className="text-[10px] font-space text-[#5B7553] uppercase">Flows</span>
+        <UITooltip content="Total units of flow pushed from source to sink across compatible reviewer-paper pairs" position="bottom" className="w-full">
+          <div className="w-full p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 cursor-help" style={{backgroundColor:"#7A9478", color:"#0F0F0F"}}>
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <GitMerge className="h-20 w-20 text-[#5B7553]" />
             </div>
-            <div className="mt-4 pt-3 border-t border-ink-black/10">
-              <p className="text-[9px] font-space text-muted uppercase tracking-wider">
-                Saturation: {(stats.averageCoveragePercentage ?? 0).toFixed(1)}% Optimal
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <p className="text-[10px] font-space font-bold text-[#5B7553] uppercase tracking-widest">
+                Computed Edges
               </p>
+              <div className="mt-6 flex items-baseline gap-2">
+                <span className="text-4xl font-mono text-ink-black tracking-tighter">
+                  {stats.totalAssignments}
+                </span>
+                <span className="text-[10px] font-space text-[#5B7553] uppercase">Flows</span>
+              </div>
+              <div className="mt-4 pt-3 border-t border-ink-black/10">
+                <p className="text-[9px] font-space text-muted uppercase tracking-wider">
+                  Saturation: {(stats.averageCoveragePercentage ?? 0).toFixed(1)}% Optimal
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </UITooltip>
 
         {/* COI Safeguards */}
-        <div className="p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1" style={{backgroundColor:"#8B8589", color:"#0F0F0F"}}>
-          <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-            <ShieldCheck className="h-20 w-20 text-accent-orange" />
-          </div>
-          <div className="relative z-10 flex flex-col h-full justify-between">
-            <p className="text-[10px] font-space font-bold text-accent-orange uppercase tracking-widest">
-              Zero-COI Policy
-            </p>
-            <div className="mt-6 flex items-baseline gap-2">
-              <span className="text-4xl font-mono text-ink-black tracking-tighter">
-                {stats.totalConflicts}
-              </span>
-              <span className="text-[10px] font-space text-accent-orange uppercase">Blocked</span>
+        <UITooltip content="Institutional and co-authorship conflicts blocked from bipartite edge creation" position="bottom" className="w-full">
+          <div className="w-full p-5 relative overflow-hidden group hover:opacity-90 transition-all duration-300 rounded-2xl shadow-2xl hover:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 cursor-help" style={{backgroundColor:"#8B8589", color:"#0F0F0F"}}>
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <ShieldCheck className="h-20 w-20 text-accent-orange" />
             </div>
-            <div className="mt-4 pt-3 border-t border-ink-black/10 flex items-center gap-2">
-              <div className="h-1.5 w-1.5 rounded-full bg-accent-orange animate-pulse"></div>
-              <p className="text-[9px] font-space text-muted uppercase tracking-wider">
-                Strict Constraints Enforced
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <p className="text-[10px] font-space font-bold text-accent-orange uppercase tracking-widest">
+                Zero-COI Policy
               </p>
+              <div className="mt-6 flex items-baseline gap-2">
+                <span className="text-4xl font-mono text-ink-black tracking-tighter">
+                  {stats.totalConflicts}
+                </span>
+                <span className="text-[10px] font-space text-accent-orange uppercase">Blocked</span>
+              </div>
+              <div className="mt-4 pt-3 border-t border-ink-black/10 flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-accent-orange animate-pulse"></div>
+                <p className="text-[9px] font-space text-muted uppercase tracking-wider">
+                  Strict Constraints Enforced
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </UITooltip>
       </div>
 
       {/* 3D CHARTS SECTION */}

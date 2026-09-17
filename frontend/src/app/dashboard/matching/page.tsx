@@ -27,6 +27,7 @@ import { formatMs } from "@/lib/utils";
 import { Card3D } from "@/components/ui/Card3D";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
+import { Tooltip, InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function MatchingCockpitPage() {
   const { user } = useAuth();
@@ -140,24 +141,28 @@ export default function MatchingCockpitPage() {
 
         {/* Action Controls */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => simulateMutation.mutate()}
-            disabled={simulateMutation.isPending || !activeConfId}
-            className="liquid-glass rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black flex items-center gap-2 disabled:opacity-50"
-          >
-            <Play className={`h-4 w-4 text-ink-black ${simulateMutation.isPending ? "animate-spin" : ""}`} />
-            <span>{simulateMutation.isPending ? "Computing Flow..." : "Simulate Allocation"}</span>
-          </button>
+          <Tooltip content="Execute non-destructive max-flow simulation across paper and reviewer bipartite sets">
+            <button
+              onClick={() => simulateMutation.mutate()}
+              disabled={simulateMutation.isPending || !activeConfId}
+              className="liquid-glass rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black flex items-center gap-2 disabled:opacity-50"
+            >
+              <Play className={`h-4 w-4 text-ink-black ${simulateMutation.isPending ? "animate-spin" : ""}`} />
+              <span>{simulateMutation.isPending ? "Computing Flow..." : "Simulate Allocation"}</span>
+            </button>
+          </Tooltip>
 
           {simulationResult && !commitSuccess && (
-            <button
-              onClick={() => commitMutation.mutate()}
-              disabled={commitMutation.isPending || simulationResult.achievedFlow === 0}
-              className="btn-3d rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black flex items-center gap-2 bg-emerald-600/30 border-emerald-500/50 hover:bg-emerald-600/50 disabled:opacity-40"
-            >
-              <CheckCheck className="h-4 w-4 text-emerald-700" />
-              <span>{commitMutation.isPending ? "Committing..." : "Commit Matches"}</span>
-            </button>
+            <Tooltip content="Transactionally commit simulated matches to database and update reviewer workloads">
+              <button
+                onClick={() => commitMutation.mutate()}
+                disabled={commitMutation.isPending || simulationResult.achievedFlow === 0}
+                className="btn-3d rounded-xl px-5 py-2.5 text-xs font-semibold text-ink-black flex items-center gap-2 bg-emerald-600/30 border-emerald-500/50 hover:bg-emerald-600/50 disabled:opacity-40"
+              >
+                <CheckCheck className="h-4 w-4 text-emerald-700" />
+                <span>{commitMutation.isPending ? "Committing..." : "Commit Matches"}</span>
+              </button>
+            </Tooltip>
           )}
 
           {commitSuccess && (
@@ -186,11 +191,14 @@ export default function MatchingCockpitPage() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 text-xs">
           {/* Solver Algorithm Selection */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-muted-foreground">Flow Solver Algorithm</label>
+            <div className="flex items-center gap-1.5">
+              <label className="font-semibold text-muted-foreground">Flow Solver Algorithm</label>
+              <InfoTooltip content="Choose between Dinic (O(V²E) layered blocking flow), Edmonds-Karp (O(VE²) BFS shortest augmenting paths), or Ford-Fulkerson (DFS paths)." />
+            </div>
             <select
               value={algorithm}
               onChange={(e) => setAlgorithm(e.target.value as AlgorithmType)}
-              className="w-full rounded-xl border border-ink-black/10 bg-white shadow-inner py-2.5 px-3 text-xs text-ink-black focus:border-ink-black/30 focus:outline-none backdrop-blur-md"
+              className="w-full rounded-xl border border-ink-black/10 bg-white shadow-inner py-2.5 px-3 text-xs text-ink-black focus:border-ink-black/30 focus:outline-none backdrop-blur-md cursor-pointer"
             >
               <option value="DINIC">Dinic&apos;s Algorithm (Layered BFS/DFS)</option>
               <option value="EDMONDS_KARP">Edmonds-Karp (Shortest BFS)</option>
@@ -200,8 +208,11 @@ export default function MatchingCockpitPage() {
 
           {/* Required Reviews per Paper */}
           <div className="space-y-1.5">
-            <div className="flex justify-between">
-              <label className="font-semibold text-muted-foreground">Reviews Required / Paper</label>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-1.5">
+                <label className="font-semibold text-muted-foreground">Reviews Required / Paper</label>
+                <InfoTooltip content="Target incoming demand capacity (source → manuscript edges in network flow)." />
+              </div>
               <span className="font-mono font-bold text-ink-black">{reviewsPerPaper}</span>
             </div>
             <input
@@ -211,39 +222,45 @@ export default function MatchingCockpitPage() {
               step="1"
               value={reviewsPerPaper}
               onChange={(e) => setReviewsPerPaper(parseInt(e.target.value))}
-              className="w-full accent-white"
+              className="w-full accent-purple-700 cursor-pointer"
             />
           </div>
 
           {/* Reviewer Capacity */}
           <div className="space-y-1.5">
-            <div className="flex justify-between">
-              <label className="font-semibold text-muted-foreground">Reviewer Max Capacity</label>
-              <span className="font-mono font-bold text-purple-800">{reviewerCapacity} papers</span>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-1.5">
+                <label className="font-semibold text-muted-foreground">Reviewer Max Capacity</label>
+                <InfoTooltip content="Upper bound on paper review slots per reviewer (reviewer → sink edges in network flow)." />
+              </div>
+              <span className="font-mono font-bold text-ink-black">{reviewerCapacity}</span>
             </div>
             <input
               type="range"
               min="1"
-              max="10"
+              max="8"
               step="1"
               value={reviewerCapacity}
               onChange={(e) => setReviewerCapacity(parseInt(e.target.value))}
-              className="w-full accent-purple-400"
+              className="w-full accent-purple-700 cursor-pointer"
             />
           </div>
 
-          {/* Exclude Conflicts Toggle */}
-          <div className="flex items-center justify-between pt-4 sm:pt-0">
-            <div>
-              <p className="font-semibold text-ink-black">Strict COI Exclusion</p>
-              <p className="text-[10px] text-muted-foreground">Cut conflicting graph edges</p>
+          {/* Conflict Exclusion */}
+          <div className="flex flex-col justify-between py-1">
+            <div className="flex items-center gap-1.5">
+              <label className="font-semibold text-muted-foreground">COI Safeguards</label>
+              <InfoTooltip content="Prune bipartite edges between authors and reviewers sharing institutional affiliations or documented conflicts." />
             </div>
-            <input
-              type="checkbox"
-              checked={excludeConflicts}
-              onChange={(e) => setExcludeConflicts(e.target.checked)}
-              className="h-4 w-4 rounded border-ink-black/20 bg-white shadow-md text-ink-black focus:ring-0"
-            />
+            <label className="flex items-center gap-2 cursor-pointer mt-2">
+              <input
+                type="checkbox"
+                checked={excludeConflicts}
+                onChange={(e) => setExcludeConflicts(e.target.checked)}
+                className="h-4 w-4 rounded accent-purple-700"
+              />
+              <span className="text-xs font-medium text-ink-black">Exclude All Conflicts (Zero-COI)</span>
+            </label>
           </div>
         </div>
       </Card3D>
