@@ -38,10 +38,10 @@ export function BackendStatusPill() {
       <div
         className={`flex items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] font-mono transition-all backdrop-blur-md ${
           status === "connected"
-            ? "border-emerald-500/30 bg-emerald-950/20 text-emerald-300"
+            ? "border-emerald-500/40 bg-emerald-100/90 text-emerald-800 font-semibold"
             : status === "connecting"
-            ? "border-amber-500/30 bg-amber-950/20 text-amber-300"
-            : "border-rose-500/30 bg-rose-950/20 text-rose-300"
+            ? "border-amber-500/40 bg-amber-100/90 text-amber-800 font-semibold"
+            : "border-rose-500/40 bg-rose-100/90 text-rose-800 font-semibold"
         }`}
       >
         {/* Status Dot */}

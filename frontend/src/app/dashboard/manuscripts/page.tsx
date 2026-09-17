@@ -34,6 +34,16 @@ export default function ManuscriptsPage() {
   const [reviewerScope, setReviewerScope] = useState<"ASSIGNED" | "ALL">(isReviewer ? "ASSIGNED" : "ALL");
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
+  // Synchronize author/reviewer filter scopes when user role hydrates from storage
+  React.useEffect(() => {
+    if (isAuthor) {
+      setAuthorScope("MY_PAPERS");
+    }
+    if (isReviewer) {
+      setReviewerScope("ASSIGNED");
+    }
+  }, [isAuthor, isReviewer]);
+
   // Form state
   const [title, setTitle] = useState("");
   const [abstractText, setAbstractText] = useState("");
@@ -156,7 +166,7 @@ export default function ManuscriptsPage() {
               placeholder="Search by title, author, topic..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-xl border border-ink-black/10 bg-white shadow-2xl rounded-2xl py-2.5 pl-9 pr-4 text-xs text-ink-black placeholder:text-muted-foreground focus:border-ink-black/30 focus:outline-none"
+              className="w-full rounded-xl border border-ink-black/15 bg-white py-2.5 pl-9 pr-4 text-xs text-ink-black placeholder:text-muted-foreground focus:border-ink-black/40 focus:outline-none"
             />
           </div>
 
@@ -225,7 +235,7 @@ export default function ManuscriptsPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="rounded-xl border border-ink-black/10 bg-white shadow-2xl rounded-2xl px-3 py-2 text-xs text-ink-black focus:outline-none cursor-pointer"
+            className="rounded-xl border border-ink-black/15 bg-white px-3 py-2 text-xs text-ink-black focus:outline-none cursor-pointer"
           >
             <option value="ALL">All Statuses</option>
             <option value="SUBMITTED">SUBMITTED</option>
@@ -410,16 +420,16 @@ export default function ManuscriptsPage() {
 
       {/* Submit Manuscript Modal */}
       {isSubmitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white shadow-2xl rounded-2xl backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-xl border bg-card p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg rounded-2xl border border-ink-black/10 bg-white p-6 shadow-2xl space-y-4 text-ink-black">
+            <div className="flex items-center justify-between border-b border-ink-black/10 pb-3">
               <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-600" />
-                <h2 className="text-base font-bold text-foreground">Submit New Manuscript</h2>
+                <FileText className="h-5 w-5 text-accent-orange" />
+                <h2 className="text-sm font-bold text-ink-black">Submit New Manuscript</h2>
               </div>
               <button
                 onClick={() => setIsSubmitModalOpen(false)}
-                className="rounded-md p-1 text-muted-foreground hover:bg-secondary"
+                className="btn-3d rounded-lg p-1 text-muted-foreground hover:text-ink-black"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -427,31 +437,31 @@ export default function ManuscriptsPage() {
 
             <form onSubmit={handleCreate} className="space-y-3 text-xs">
               <div>
-                <label className="font-semibold text-foreground">Paper Title *</label>
+                <label className="font-semibold text-muted-foreground">Paper Title *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Distributed Consensus on Large-Scale Bipartite Graphs"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-ink-black/15 bg-white p-2.5 text-xs text-ink-black focus:border-ink-black/40 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-foreground">Abstract</label>
+                <label className="font-semibold text-muted-foreground">Abstract</label>
                 <textarea
                   rows={3}
                   placeholder="Brief synopsis of methodology and research contributions..."
                   value={abstractText}
                   onChange={(e) => setAbstractText(e.target.value)}
-                  className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-ink-black/15 bg-white p-2.5 text-xs text-ink-black focus:border-ink-black/40 focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold text-foreground">Required Reviews</label>
+                  <label className="font-semibold text-muted-foreground">Required Reviews</label>
                   {isAdmin ? (
                     <input
                       type="number"
@@ -459,64 +469,64 @@ export default function ManuscriptsPage() {
                       max={5}
                       value={requiredReviews}
                       onChange={(e) => setRequiredReviews(Number(e.target.value))}
-                      className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-ink-black/15 bg-white p-2.5 text-xs text-ink-black focus:border-ink-black/40 focus:outline-none font-mono"
                     />
                   ) : (
-                    <div className="mt-1 w-full rounded-md border border-ink-black/10 bg-ink-black/5 p-2 text-xs text-ink-black font-mono">
-                      2 Reviews (Standard Conference Policy)
+                    <div className="mt-1 w-full rounded-xl border border-ink-black/10 bg-ink-black/5 p-2.5 text-xs text-ink-black font-mono">
+                      2 Reviews (Standard Policy)
                     </div>
                   )}
                 </div>
                 <div>
-                  <label className="font-semibold text-foreground">Author Affiliation</label>
+                  <label className="font-semibold text-muted-foreground">Author Affiliation</label>
                   <input
                     type="text"
                     value={affiliationsInput}
                     onChange={(e) => setAffiliationsInput(e.target.value)}
-                    className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-ink-black/15 bg-white p-2.5 text-xs text-ink-black focus:border-ink-black/40 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-lg border border-ink-black/10 bg-ink-black/5 text-[11px] font-mono text-muted-foreground flex justify-between">
+              <div className="p-2.5 rounded-xl border border-ink-black/10 bg-ink-black/5 text-[11px] font-mono text-muted-foreground flex justify-between">
                 <span>Submitting Author:</span>
                 <span className="font-bold text-ink-black">{user?.fullName || "Ashish Vaswani"} ({user?.email || "author.vaswani@google.com"})</span>
               </div>
 
               <div>
-                <label className="font-semibold text-foreground">Topic Overlap Tags (comma separated)</label>
+                <label className="font-semibold text-muted-foreground">Topic Overlap Tags (comma separated)</label>
                 <input
                   type="text"
                   value={topicsInput}
                   onChange={(e) => setTopicsInput(e.target.value)}
-                  className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-ink-black/15 bg-white p-2.5 text-xs text-ink-black focus:border-ink-black/40 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-foreground">Keywords (comma separated)</label>
+                <label className="font-semibold text-muted-foreground">Keywords (comma separated)</label>
                 <input
                   type="text"
                   value={keywordsInput}
                   onChange={(e) => setKeywordsInput(e.target.value)}
-                  className="mt-1 w-full rounded-md border bg-background p-2 text-xs focus:border-blue-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl border border-ink-black/15 bg-white p-2.5 text-xs text-ink-black focus:border-ink-black/40 focus:outline-none"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t">
+              <div className="flex justify-end gap-2 pt-3 border-t border-ink-black/10">
                 <button
                   type="button"
                   onClick={() => setIsSubmitModalOpen(false)}
-                  className="rounded-md border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-secondary"
+                  className="btn-3d rounded-xl px-4 py-2 text-xs font-semibold text-muted-foreground hover:text-ink-black"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="rounded-md bg-blue-600 px-4 py-1.5 text-xs font-semibold text-ink-black hover:bg-blue-700 disabled:opacity-50"
+                  className="liquid-glass rounded-xl px-5 py-2 text-xs font-semibold text-ink-black disabled:opacity-50"
                 >
-                  {createMutation.isPending ? "Submitting..." : "Submit Paper"}
+                  {createMutation.isPending ? "Submitting..." : "Submit Manuscript"}
                 </button>
               </div>
             </form>

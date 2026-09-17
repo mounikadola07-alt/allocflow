@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 
 export default function AuditLogsPage() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -17,6 +17,17 @@ export default function AuditLogsPage() {
     queryFn: () => api.getAuditLogs(0, 50),
     enabled: isAdmin,
   });
+
+  if (isAuthLoading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-ink-black border-t-transparent" />
+          <p className="text-xs text-ink-black/80 font-mono">Verifying compliance permissions...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (user && !isAdmin) {
     return (

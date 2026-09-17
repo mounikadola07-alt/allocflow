@@ -7,6 +7,14 @@ import { useAuth } from "@/lib/auth";
 import { LogOut } from "lucide-react";
 import type { UserRole } from "@/types";
 import { BackendStatusPill } from "./BackendStatusPill";
+import { Tooltip } from "@/components/ui/Tooltip";
+
+const ROLE_TIPS: Record<UserRole, string> = {
+  SUPER_ADMIN: "Switch to System Administrator (Full platform & provisioning control)",
+  CONFERENCE_ADMIN: "Switch to Conference Chair (Manage submissions, cycles & cockpit)",
+  REVIEWER: "Switch to Peer Reviewer (Assigned papers & evaluation controls)",
+  AUTHOR: "Switch to Author (Submit papers & track double-blind status)",
+};
 
 interface NavbarProps {
   activeConferenceCode?: string;
@@ -66,23 +74,24 @@ export function Navbar({ activeConferenceCode = "ICDCS-2026" }: NavbarProps) {
         <div className="hidden lg:flex items-center gap-1 p-1 text-xs font-space border border-ink-black/10 bg-ink-black/5">
           <span className="px-2 text-[10px] uppercase text-muted tracking-widest">User:</span>
           {(["SUPER_ADMIN", "CONFERENCE_ADMIN", "REVIEWER", "AUTHOR"] as UserRole[]).map((role) => (
-            <button
-              key={role}
-              onClick={() => quickLogin(role)}
-              className={`px-2 py-0.5 text-[10px] uppercase tracking-wider transition-all ${
-                user?.role === role
-                  ? "bg-ink-black text-beige-bg font-bold"
-                  : "text-muted hover:text-ink-black"
-              }`}
-            >
-              {role === "SUPER_ADMIN"
-                ? "Sys"
-                : role === "CONFERENCE_ADMIN"
-                ? "Chair"
-                : role === "REVIEWER"
-                ? "Rev"
-                : "Auth"}
-            </button>
+            <Tooltip key={role} content={ROLE_TIPS[role]} position="bottom">
+              <button
+                onClick={() => quickLogin(role)}
+                className={`px-2 py-0.5 text-[10px] uppercase tracking-wider transition-all ${
+                  user?.role === role
+                    ? "bg-ink-black text-beige-bg font-bold"
+                    : "text-muted hover:text-ink-black"
+                }`}
+              >
+                {role === "SUPER_ADMIN"
+                  ? "Sys"
+                  : role === "CONFERENCE_ADMIN"
+                  ? "Chair"
+                  : role === "REVIEWER"
+                  ? "Rev"
+                  : "Auth"}
+              </button>
+            </Tooltip>
           ))}
         </div>
 

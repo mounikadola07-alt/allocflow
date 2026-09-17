@@ -30,7 +30,7 @@ import Link from "next/link";
 import { Tooltip, InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function MatchingCockpitPage() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "CONFERENCE_ADMIN";
   const queryClient = useQueryClient();
 
@@ -97,6 +97,17 @@ export default function MatchingCockpitPage() {
       console.error("Failed to fetch assignment explanation", e);
     }
   };
+
+  if (isAuthLoading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-ink-black border-t-transparent" />
+          <p className="text-xs text-ink-black/80 font-mono">Initializing matching cockpit...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (user && !isAdmin) {
     return (

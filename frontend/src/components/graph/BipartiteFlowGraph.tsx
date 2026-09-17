@@ -15,6 +15,7 @@ import {
   Box,
 } from "lucide-react";
 import type { GraphVisualization, GraphNode, GraphEdge } from "@/types";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 interface BipartiteFlowGraphProps {
   data: GraphVisualization | null;
@@ -436,37 +437,44 @@ export function BipartiteFlowGraph({
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-                disabled={currentStep === 0}
-                className="btn-3d rounded-lg p-1 text-muted-foreground hover:text-ink-black disabled:opacity-30"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="btn-3d flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold text-ink-black"
-              >
-                {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-                <span>{isPlaying ? "Pause" : "Play Replay"}</span>
-              </button>
-              <button
-                onClick={() => setCurrentStep((prev) => Math.min(traces.length - 1, prev + 1))}
-                disabled={currentStep >= traces.length - 1}
-                className="btn-3d rounded-lg p-1 text-muted-foreground hover:text-ink-black disabled:opacity-30"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => {
-                  setCurrentStep(0);
-                  setIsPlaying(false);
-                }}
-                className="btn-3d rounded-lg p-1 text-muted-foreground hover:text-ink-black"
-                title="Reset Replay"
-              >
-                <RotateCcw className="h-4 w-4" />
-              </button>
+              <Tooltip content="Step backward one augmentation iteration">
+                <button
+                  onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
+                  disabled={currentStep === 0}
+                  className="btn-3d rounded-lg p-1 text-muted-foreground hover:text-ink-black disabled:opacity-30"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+              </Tooltip>
+              <Tooltip content={isPlaying ? "Pause timeline replay" : "Play step-by-step augmenting path animation"}>
+                <button
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="btn-3d flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold text-ink-black"
+                >
+                  {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                  <span>{isPlaying ? "Pause" : "Play Replay"}</span>
+                </button>
+              </Tooltip>
+              <Tooltip content="Step forward one augmentation iteration">
+                <button
+                  onClick={() => setCurrentStep((prev) => Math.min(traces.length - 1, prev + 1))}
+                  disabled={currentStep >= traces.length - 1}
+                  className="btn-3d rounded-lg p-1 text-muted-foreground hover:text-ink-black disabled:opacity-30"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </Tooltip>
+              <Tooltip content="Reset timeline replay to initial state">
+                <button
+                  onClick={() => {
+                    setCurrentStep(0);
+                    setIsPlaying(false);
+                  }}
+                  className="btn-3d rounded-lg p-1 text-muted-foreground hover:text-ink-black"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </button>
+              </Tooltip>
             </div>
           </div>
 

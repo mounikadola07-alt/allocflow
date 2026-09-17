@@ -18,7 +18,7 @@ import Link from "next/link";
 import { Tooltip, InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function ReviewersRosterPage() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: reviewers, isLoading } = useQuery({
@@ -26,6 +26,17 @@ export default function ReviewersRosterPage() {
     queryFn: () => api.getReviewers(),
     enabled: user?.role !== "AUTHOR",
   });
+
+  if (isAuthLoading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-ink-black border-t-transparent" />
+          <p className="text-xs text-ink-black/80 font-mono">Verifying double-blind credentials...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (user?.role === "AUTHOR") {
     return (
@@ -80,7 +91,7 @@ export default function ReviewersRosterPage() {
           placeholder="Search by reviewer name, email, topic..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-xl border border-ink-black/10 bg-white shadow-2xl rounded-2xl py-2.5 pl-9 pr-4 text-xs text-ink-black placeholder:text-muted-foreground focus:border-ink-black/30 focus:outline-none"
+          className="w-full rounded-xl border border-ink-black/15 bg-white py-2.5 pl-9 pr-4 text-xs text-ink-black placeholder:text-muted-foreground focus:border-ink-black/40 focus:outline-none"
         />
       </div>
 

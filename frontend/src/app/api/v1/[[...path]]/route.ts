@@ -618,6 +618,7 @@ export async function POST(req: NextRequest, { params }: { params: { path?: stri
     const track = body.track || body.trackName || "Systems & Algorithms";
     const newDoc = {
       id: "m-" + Date.now(),
+      conferenceId: body.conferenceId || (mockConferences.length > 0 ? mockConferences[0].id : "conf-icdcs-2026"),
       paperCode: `ICDCS-2026-${String(mockManuscripts.length + 1).padStart(3, "0")}`,
       title: body.title || "Untitled Paper",
       track,
@@ -635,6 +636,9 @@ export async function POST(req: NextRequest, { params }: { params: { path?: stri
       createdAt: new Date().toISOString(),
     };
     mockManuscripts.push(newDoc);
+    if (mockConferences.length > 0) {
+      mockConferences[0].manuscriptCount = mockManuscripts.length;
+    }
 
     mockAuditLogs.unshift({
       id: `a-${Date.now()}`,

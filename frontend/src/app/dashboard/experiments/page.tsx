@@ -26,6 +26,7 @@ import {
 } from "recharts";
 import { formatMs } from "@/lib/utils";
 import { Card3D } from "@/components/ui/Card3D";
+import { Tooltip as UITooltip, InfoTooltip } from "@/components/ui/Tooltip";
 
 export default function ScalabilityExperimentsPage() {
   const [mounted, setMounted] = useState(false);
@@ -135,27 +136,31 @@ export default function ScalabilityExperimentsPage() {
 
         <div className="flex items-center gap-2.5">
           {sweepResult && (
-            <button
-              onClick={handleExportCSV}
-              className="flex items-center gap-1.5 rounded-md border bg-secondary/50 px-3 py-2 text-xs font-semibold text-secondary-foreground hover:bg-secondary transition-colors"
-            >
-              <Download className="h-4 w-4" />
-              <span>Export CSV</span>
-            </button>
+            <UITooltip content="Download benchmark data points (papers, reviewers, runtime, memory) as a CSV file">
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center gap-1.5 rounded-md border bg-secondary/50 px-3 py-2 text-xs font-semibold text-secondary-foreground hover:bg-secondary transition-colors"
+              >
+                <Download className="h-4 w-4" />
+                <span>Export CSV</span>
+              </button>
+            </UITooltip>
           )}
 
-          <button
-            onClick={() => sweepMutation.mutate()}
-            disabled={sweepMutation.isPending}
-            className="flex items-center gap-1.5 rounded-md bg-purple-600 px-4 py-2 text-xs font-semibold text-ink-black shadow-sm hover:bg-purple-700 disabled:opacity-50 transition-colors"
-          >
-            {sweepMutation.isPending ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-ink-black border-t-transparent" />
-            ) : (
-              <Play className="h-4 w-4" />
-            )}
-            <span>{sweepMutation.isPending ? "Executing Scalability Sweep..." : "Run Parameter Sweep"}</span>
-          </button>
+          <UITooltip content="Execute asymptotic empirical runtime scaling across variable manuscript and reviewer set sizes">
+            <button
+              onClick={() => sweepMutation.mutate()}
+              disabled={sweepMutation.isPending}
+              className="flex items-center gap-1.5 rounded-xl bg-purple-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-purple-700 disabled:opacity-50 transition-colors"
+            >
+              {sweepMutation.isPending ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+              <span>{sweepMutation.isPending ? "Executing Scalability Sweep..." : "Run Parameter Sweep"}</span>
+            </button>
+          </UITooltip>
         </div>
       </div>
 
@@ -168,7 +173,10 @@ export default function ScalabilityExperimentsPage() {
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7 text-xs">
           <div>
-            <label className="font-semibold text-muted-foreground">Start Papers (N_start)</label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-muted-foreground">Start Papers (N_start)</label>
+              <InfoTooltip content="Initial number of manuscripts in the synthetic bipartite graph" />
+            </div>
             <input
               type="number"
               value={startN}
@@ -178,7 +186,10 @@ export default function ScalabilityExperimentsPage() {
           </div>
 
           <div>
-            <label className="font-semibold text-muted-foreground">End Papers (N_end)</label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-muted-foreground">End Papers (N_end)</label>
+              <InfoTooltip content="Maximum number of manuscripts evaluated in the sweep sequence" />
+            </div>
             <input
               type="number"
               value={endN}
@@ -188,7 +199,10 @@ export default function ScalabilityExperimentsPage() {
           </div>
 
           <div>
-            <label className="font-semibold text-muted-foreground">Step Size (ΔN)</label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-muted-foreground">Step Size (ΔN)</label>
+              <InfoTooltip content="Incremental step size between successive evaluation points" />
+            </div>
             <input
               type="number"
               value={step}
@@ -198,7 +212,10 @@ export default function ScalabilityExperimentsPage() {
           </div>
 
           <div>
-            <label className="font-semibold text-muted-foreground">Reviewer Ratio (M/N)</label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-muted-foreground">Reviewer Ratio (M/N)</label>
+              <InfoTooltip content="Ratio of available reviewers relative to manuscript count (M = ratio * N)" />
+            </div>
             <input
               type="number"
               step="0.05"
@@ -209,7 +226,10 @@ export default function ScalabilityExperimentsPage() {
           </div>
 
           <div>
-            <label className="font-semibold text-muted-foreground">Warmup Trials</label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-muted-foreground">Warmup Trials</label>
+              <InfoTooltip content="Number of unmeasured solver iterations executed to prime the runtime and cache" />
+            </div>
             <input
               type="number"
               value={warmups}
@@ -219,7 +239,10 @@ export default function ScalabilityExperimentsPage() {
           </div>
 
           <div>
-            <label className="font-semibold text-muted-foreground">Measured Trials</label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-muted-foreground">Measured Trials</label>
+              <InfoTooltip content="Number of benchmarked executions per graph size used to compute median and p95 latencies" />
+            </div>
             <input
               type="number"
               value={trials}
@@ -229,7 +252,10 @@ export default function ScalabilityExperimentsPage() {
           </div>
 
           <div>
-            <label className="font-semibold text-muted-foreground">Deterministic Seed</label>
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-muted-foreground">Deterministic Seed</label>
+              <InfoTooltip content="Pseudorandom generator seed ensuring exact reproducibility of synthetic bipartite graphs across runs" />
+            </div>
             <input
               type="number"
               value={seed}

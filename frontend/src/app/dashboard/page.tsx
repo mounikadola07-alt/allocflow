@@ -102,7 +102,7 @@ export default function DashboardOverviewPage() {
                 ? "Peer Reviewer Portal"
                 : "Conference Operations"}
             </h1>
-            <span className="border border-green-500/30 bg-green-500/10 px-2 py-0.5 text-[9px] font-space font-bold text-green-400 uppercase tracking-widest animate-pulse mt-2">
+            <span className="border border-emerald-500/30 bg-emerald-100 px-2 py-0.5 text-[9px] font-space font-bold text-emerald-800 uppercase tracking-widest mt-2 rounded">
               {isAuthor ? "Active Submissions" : isReviewer ? "Evaluation Mode" : "Live Allocation"}
             </span>
           </div>
