@@ -248,3 +248,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Interactive Visualizer**: Dynamic $S \to P \to R \to T$ SVG bipartite flow graph with augmenting path step player.
 - **Empirical Research Lab**: Dynamic parameter sweeps ($N=10 \dots 500$) with asymptotic curve analysis.
 
+### Documentation
+- Completed comprehensive changelog indexing all releases, security invariants, and algorithmic benchmarks.
+
