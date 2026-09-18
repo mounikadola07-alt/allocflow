@@ -236,3 +236,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### DevOps - Build
 - Optimized Dockerfiles with multi-stage builds and Alpine runtime images to minimize container footprint.
 
+
+---
+
+## [1.0.0] - 2026-09-18
+
+### Release Highlights
+- **Mathematical Equivalence**: Proven $\text{Ford-Fulkerson} \equiv \text{Edmonds-Karp} \equiv \text{Dinic}$ on identical bipartite networks.
+- **Enterprise Ready**: Stateless JWT authentication, role-based access control, Flyway schema migrations, and immutable audit logs.
+- **Explainable Reviewer Allocation**: Transparent assignment proof drawer with zero-COI guarantees.
+- **Interactive Visualizer**: Dynamic $S \to P \to R \to T$ SVG bipartite flow graph with augmenting path step player.
+- **Empirical Research Lab**: Dynamic parameter sweeps ($N=10 \dots 500$) with asymptotic curve analysis.
+
